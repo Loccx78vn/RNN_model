@@ -64,6 +64,6 @@ model %>% fit(X_train, y_train, epochs = 10, batch_size = 32)
 
 Where `X_train` is your training input data, `y_train` is the target output, `epochs` is the number of times the model will iterate over the data, and `batch_size` is the number of samples processed before the model’s weights are updated.
 
-[](img/RNN_background.jpg)
+[](img/RNN_background)
 
 With these steps, you can successfully build and train an RNN or LSTM model in R using the `keras` package to handle sequential data.
