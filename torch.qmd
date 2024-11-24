@@ -11,9 +11,9 @@ number-sections: true
 
 Ở đây ta sẽ học về mô hình machine learning được ứng dụng nhiều nhất trong việc phân tích dữ liệu thời gian là *RNN* và *LSTM*.
 
-## Định nghĩa:
+## Mô hình RNN:
 
-### Mô hình RNN:
+### Định nghĩa:
 
 Điểm chung là cả hai mô hình đều thuộc phân lớp *Deep learning* - nghĩa là học máy sâu với đặc điểm chung là phân chia dữ liệu thành nhiều lớp và bắt đầu "học" dần qua từng lớp để đưa ra kết quả cuối cùng. Ở hình dưới đây, $X_o$ đại diện cho dữ liệu đầu vào, $h_t$ là output đầu ra của từng step và $A$ là những gì đã "học" được tại step đó và được truyền cho step tiếp theo. Trong tài liệu chuẩn thì họ thường kí hiệu là $X_t$, $Y_t$, $h_{t-1}$.
 
@@ -32,26 +32,113 @@ number-sections: true
   </div>
 </div>
 ```
-Khi nhìn hình thì bạn có thể bối rối chưa hiểu các kí tự và hình ảnh thì bạn có thể tưởng tượng **học máy** như 1 đứa trẻ và để nó có thể hiểu được câu: "Hôm nay con đi học" thì nó phải học từng chữ cái như: a,b,c,... trước ròi mới ghép thành từ đơn như: "Hôm","Nay",... rồi ghép thành câu trên. Vậy giả sử như hôm nay học được từ "Hôm" thì nó sẽ bắt đầu ghi nhớ từ đã học vào trong $A$. Nếu sau này ta cần **học máy** hiểu câu "Hôm sau con đi chơi" thì tốc độ học của **học máy** sẽ nhanh lên vì thay vì nó phải học 5 chữ đơn như thông thường thì nó chỉ cần học 4 chữ còn lại trừ chữ "hôm". Vậy bạn đã hiểu ý tưởng nền tảng của *RNN* rồi ha!
+Khi nhìn hình thì bạn có thể bối rối chưa hiểu các kí tự và hình ảnh thì bạn có thể tưởng tượng **học máy** như 1 đứa trẻ và để nó có thể hiểu được câu: "Hôm nay con đi học" thì nó phải học từng chữ cái như: a,b,c,... trước ròi mới ghép thành từ đơn như: "Hôm","Nay",... rồi ghép thành câu trên.
 
-Nếu muốn hiểu thêm về *RNN*, bạn có thể tham khảo link này: [Recurrent Neural Network: Từ RNN đến LSTM](https://viblo.asia/p/recurrent-neural-network-tu-rnn-den-lstm-gGJ597z1ZX2).
+Vậy giả sử như hôm nay học được từ "Hôm" thì nó sẽ bắt đầu ghi nhớ từ đã học vào trong $A$. Nếu sau này ta cần **học máy** hiểu câu "Hôm sau con đi chơi" thì tốc độ học của **học máy** sẽ nhanh lên vì thay vì nó phải học 5 chữ đơn như thông thường thì nó chỉ cần học 4 chữ còn lại trừ chữ "hôm". Vậy bạn đã hiểu ý tưởng nền tảng của *RNN* rồi ha!
 
-Và trong *RNN* có 1 vấn đề lớn là *Vanishing Gradient* nghĩa là mô hình sẽ không còn "học" thêm được nữa cho dù tăng số `epochs`. Theo phần chứng minh của [anh Tuấn](https://nttuan8.com/bai-14-long-short-term-memory-lstm/) cho thấy *RNN* sẽ luôn xảy ra vấn đề đó cho dù bạn có xây dựng mô hình tốt như thế nào. Điều này có thể hiểu đơn giản như việc bạn học liên tục dẫn tới quá tải. Do đó, *RNN* chỉ học các thông tin $A$ từ các step gần nhất và đó là lí do ra đời *LSTM - Long short term memory.*
+### Nguyên lí hoạt động:
+
+Đầu tiên, *RNN* sẽ tính toán *hidden state* là $h_t$ với công thức là:
+
+$$
+   \mathbf{h}_t = \text{activation}(\mathbf{W}_\text{hh} \mathbf{h}_{t-1} + \mathbf{W}_\text{xh} \mathbf{x}_t + \mathbf{b}_\text{h})
+$$ Sau đó, $h_t$ sẽ được làm input cho các *state* sau và dựa vào đó để tính output với công thức là:
+
+$$
+y_t = W_y \cdot h_t + b_y
+$$
+
+**Ví dụ:** Mình muốn dự đoán hành động trong câu nói "I am reading book" bằng mô hình *RNN* như sau:
+
+-   *Bước 1*: Chuyển đổi thành dạng số bằng *embedding layer*:
+
+Mình sẽ gán từng từ đơn sang dạng số như:
+
+-   "I" -\> $x_1$
+
+-   "am" -\> $x_2$
+
+-   "reading" -\> $x_3$
+
+-   "book" -\> $x_4$
+
+-   *Bước 2:* Thêm hidden layer và bắt đầu tính toán:
+
+Cho input: "I" $$
+   h_1 = \tanh(W_x \cdot x_1 + W_h \cdot h_0 + b)
+$$
+
+Cho input: "am" $$
+   h_2 = \tanh(W_x \cdot x_2 + W_h \cdot h_1 + b)
+$$ Cho input: "reading" $$
+   h_3 = \tanh(W_x \cdot x_3 + W_h \cdot h_2 + b)
+$$
+
+Cho input: "book" $$
+   h_4 = \tanh(W_x \cdot x_4 + W_h \cdot h_3 + b)
+$$
+
+-   *Bước 3:* Tính toán output: Dùng hàm activation **softmax** để phân lớp theo xác suất.
+
+$$
+\hat{y} = \text{softmax}(W_y \cdot h_4 + b_y)
+$$ Nếu muốn hiểu thêm về cách hoạt động *RNN*, bạn có thể tham khảo link này: [Recurrent Neural Network: Từ RNN đến LSTM](https://viblo.asia/p/recurrent-neural-network-tu-rnn-den-lstm-gGJ597z1ZX2).
+
+### Vấn đề lớn của RNN:
+
+*RNN* có 1 vấn đề lớn là *Vanishing Gradient* nghĩa là mô hình sẽ không còn "học" thêm được nữa cho dù tăng số `epochs`. Nguyên nhân vì sao như vậy thì bạn có thể tham khảo phần chứng minh của [anh Tuấn](https://nttuan8.com/bai-14-long-short-term-memory-lstm/).
+
+```{=html}
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/vanishing.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 2: Vanishing Gradient Problem
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://www.superdatascience.com/blogs/recurrent-neural-networks-rnn-the-vanishing-gradient-problem" target="_blank">Link to Image</a>
+  </div>
+</div>
+```
+Vấn đề này sẽ làm network khó update *weight* dẫn tới thời gian học lâu và khó để đạt được output. Bạn có thể hiểu đơn giản như việc bạn học liên tục dẫn tới quá tải và *RNN* cũng không như vậy. Do đó, *RNN* chỉ học các thông tin từ *state* gần và đó là lí do ra đời *LSTM - Long short term memory.*
 
 ::: callout-warning
-<u>Lưu ý</u>: Điều này không có nghĩa *LSTM* luôn tốt hơn *RNN* vì có những bài toán với đầu vào đơn giản thì mô hình chỉ cần học các step đầu là đã "học" đầy đủ thông tin cần thiết. 
-Mô hình *LSTM* phổ biến với các bài toán phức tạp như tự động dịch ngôn ngữ, ghi chép lại theo giọng nói...
+<u>Lưu ý</u>: Điều này không có nghĩa *LSTM* luôn tốt hơn *RNN* vì có những bài toán với đầu vào đơn giản thì mô hình chỉ cần học các step đầu là đã "học" đầy đủ thông tin cần thiết. Mô hình *LSTM* phổ biến với các bài toán phức tạp như tự động dịch ngôn ngữ, ghi chép lại theo giọng nói...
 :::
 
 ### Mô hình LSTM:
 
-Có thể xem mô hình *LSTM* như biến thể của *RNN*. Về cấu trúc, *LSTM* có ba cổng chính giúp nó xử lý và duy trì thông tin qua các bước thời gian:
+Có thể xem mô hình *LSTM* như biến thể của *RNN*. Về cấu trúc, *LSTM* phức tạp hơn *RNN*:
 
--   Cổng quên (Forget Gate): Quyết định thông tin nào cần bị quên trong trạng thái ô nhớ.
+```{=html}
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/compare.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 3: So sánh mô hình RNN và LSTM
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://dominhhai.github.io/vi/2017/10/what-is-lstm/" target="_blank">Link to Image</a>
+  </div>
+</div>
+```
+Cấu trúc cơ bản gồm:
+
+-   Cổng quên (Forget Gate): có tác dụng quyết định thông tin nào cần bị quên trong trạng thái ô nhớ.
 
 -   Cổng nhập (Input Gate): Xác định thông tin nào cần được ghi vào trạng thái ô nhớ.
 
 -   Cổng xuất (Output Gate): Quyết định thông tin nào sẽ được xuất ra từ trạng thái ô nhớ để ảnh hưởng đến dự đoán tiếp theo.
+
+Bạn có thể kham khảo thêm bài viết của [dominhhai](https://dominhhai.github.io/vi/2017/10/what-is-lstm/) về cách hoạt động của *RNN* và *LSTM* để hiểu thêm.
+
+Tiếp theo, ta sẽ bắt đầu xây dựng thử mô hình trong R.
 
 ## Xây dựng mô hình:
 
@@ -133,8 +220,8 @@ sales_data |>
 Nếu ta phân tich sâu về nhu cầu của từng mặt hàng theo thứ trong tuần, ta sẽ thấy rằng mặt hàng A, B thì bán chạy vào thứ 4 và thứ 7, còn mặt hàng C thì bán chạy vào thứ 2 và thứ 3.
 
 ::: panel-tabset
-
 ##### Product A:
+
 ```{r}
 #| warning: false
 #| message: false
@@ -158,6 +245,7 @@ hcboxplot(
 ```
 
 ##### Product B:
+
 ```{r}
 #| warning: false
 #| message: false
@@ -181,6 +269,7 @@ hcboxplot(
 ```
 
 ##### Product C:
+
 ```{r}
 #| warning: false
 #| message: false
@@ -633,10 +722,37 @@ highchart() %>%
   hc_legend(enabled = TRUE)
 ```
 
+### Xác định cấu trúc mô hình:
+
+Nếu bạn để ý, thực chất code cho mô hình cho như mình đã trình bày thì khá đơn giản và điều khó nhất trong mô hình là xác định số lớp *layer* trong mô hình. Như bài toán *time series forecasting* thì mình chỉ cần 2,3 lớp layer đơn giản là đã đạt kết quả tốt với sai số rất thấp (\< 0.03), còn với các bài toán phức tạp hơn thì số *layer* sẽ nhiều hơn.
+
+Vậy quy tắc xác định mô hình là như thế nào ? Câu trả lời là **không có quy tắc nào cả** và chỉ có các tips mà mình lụm nhặt trên mạng như sau:
+
+-   *Number of layer* nên nằm giữa số input và số output. Như bài thực hành trên thì số *layer* nên nằm trong khoảng (1,12). Hoặc bạn có thể sử dụng hàm dưới đây để xác định.
+
+$$
+N_h = \frac{N_s}{\alpha \cdot (N_i + N_o)}
+$$
+
+Với các tham số gồm:
+
+1.  $N_h$ là số lượng *hidden neurons*.
+
+2.  $N_s$ là số lượng mẫu trong *training data*.
+
+3.  $\alpha$ là yếu tố tỷ lệ tùy ý (thường từ 2-10).
+
+4.  $N_i$ là số lượng nơ-ron input
+
+5.  $N_o$ là số lượng nơ-ron output.
+
+- Các hàm *acvtivation* như **Tanh** thì phù hợp cho dự báo giá trị liên tục từ dữ liệu chuỗi, **ReLU** giúp cho quá trình training nhanh hơn và không gây ra *vanishing problem* do không bị chặn, **Softmax** thường dùng ở *final layer* cho bài toán classification, **Sigmoid** thường dùng cho hồi quy logic.
+
+- *Number of neurons*: Số lượng nơ-ron trong một lớp quyết định lượng thông tin mà mạng có thể lưu trữ. Nhiều nơ-ron giúp mạng học được các mẫu phức tạp hơn, nhưng cũng làm tăng nguy cơ overfitting (quá khớp) và yêu cầu nhiều tài nguyên tính toán hơn. Bạn có thể bắt đầu với một số lượng nơ-ron tương đối nhỏ, như 128 hoặc 256...
 
 ## Kết luận:
 
-Như vậy, chúng ta đã được học về thuật toán Genetic và mô hình MILP cũng như cách thực hiện trong Rstudio.
+Như vậy, chúng ta đã được học về mô hình *RNN* và *LSTM* và cách xây dựng chúng trong R.
 
 Nếu bạn có câu hỏi hay thắc mắc nào, đừng ngần ngại liên hệ với mình qua Gmail. Bên cạnh đó, nếu bạn muốn xem lại các bài viết trước đây của mình, hãy nhấn vào hai nút dưới đây để truy cập trang **Rpubs** hoặc mã nguồn trên **Github**. Rất vui được đồng hành cùng bạn, hẹn gặp lại! 😄😄😄
 
@@ -674,7 +790,7 @@ Nếu bạn có câu hỏi hay thắc mắc nào, đừng ngần ngại liên h�
         </form>
         <div class="github-button">
             <button>
-                <a href="https://github.com/Loccx78vn/Time_series_forcasting" target="_blank" style="color: white; text-decoration: none;">
+                <a href="https://github.com/Loccx78vn/RNN_model" target="_blank" style="color: white; text-decoration: none;">
                     <i class="fab fa-github"></i> View Code on GitHub
                 </a>
             </button>

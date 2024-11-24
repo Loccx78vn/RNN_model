@@ -1,9 +1,9 @@
 {
     "id": "CE5D8884",
-    "path": "~/Xuân Lộc/R/Project R/RNN_model/index.qmd",
+    "path": "~/GitHub/RNN_model/index.qmd",
     "project_path": "index.qmd",
     "type": "quarto_markdown",
-    "hash": "1348144610",
+    "hash": "0",
     "contents": "",
     "dirty": false,
     "created": 1732421245592.0,
@@ -17,8 +17,8 @@
         "docOutlineVisible": "1",
         "rmdVisualCollapsedChunks": "",
         "rmdVisualModeLocation": "451:2070.933349609375",
-        "cursorPosition": "0,0",
-        "scrollLine": "21"
+        "cursorPosition": "23,40",
+        "scrollLine": "24"
     },
     "folds": "",
     "lastKnownWriteTime": 1732421257,
