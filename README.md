@@ -4,7 +4,7 @@ Recurrent Neural Networks (RNNs) are a class of artificial neural networks desig
 
 However, a fundamental challenge with traditional RNNs is the vanishing gradient problem. During training, gradients can become very small, making it difficult for the model to learn long-term dependencies in the data. To address this issue, Long Short-Term Memory (LSTM) networks were introduced. LSTMs are a specialized form of RNNs that are equipped with gates (input, forget, and output) to manage and preserve information over longer sequences. This makes LSTMs much more effective in handling tasks involving long-term dependencies, such as language modeling and sequential decision-making.
 
-### Part 2: Using the Keras Package in R to Build RNN and LSTM Models
+### Using the Keras Package in R to Build RNN and LSTM Models
 
 In R, the `keras` package provides a high-level interface to build and train deep learning models, including RNNs and LSTMs. To build these models, we can use the Keras API, which allows for easy construction of neural network architectures.
 
