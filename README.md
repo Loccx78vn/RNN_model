@@ -66,4 +66,4 @@ Where `X_train` is your training input data, `y_train` is the target output, `ep
 
 With these steps, you can successfully build and train an RNN or LSTM model in R using the `keras` package to handle sequential data.
 
-[](img/RNN_background.jpg)
+![](img/RNN_background.jpg)
