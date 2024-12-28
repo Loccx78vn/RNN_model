@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.30">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Mô hình Transformer – Transformer model</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-3a01e2046221230fdceeea94b1ec5d67.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-a4a11d514c7d463668e07712114998e6.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-125b9b3157c40bd7b5c50432b13df477.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Transformer model</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./transfer.html" aria-current="page"> 
+<span class="menu-text">Mô hình Transformer</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./practice.html"> 
+<span class="menu-text">Time series forecasting</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#mô-hình-transformer" id="toc-mô-hình-transformer" class="nav-link active" data-scroll-target="#mô-hình-transformer"><span class="header-section-number">1</span> Mô hình Transformer:</a>
+  <ul class="collapse">
+  <li><a href="#giới-thiệu" id="toc-giới-thiệu" class="nav-link" data-scroll-target="#giới-thiệu"><span class="header-section-number">1.1</span> Giới thiệu:</a></li>
+  <li><a href="#so-sánh-với-rnn-lstm" id="toc-so-sánh-với-rnn-lstm" class="nav-link" data-scroll-target="#so-sánh-với-rnn-lstm"><span class="header-section-number">1.2</span> So sánh với RNN, LSTM:</a></li>
+  </ul></li>
+  <li><a href="#các-thành-phần-cơ-bản-trong-transformer" id="toc-các-thành-phần-cơ-bản-trong-transformer" class="nav-link" data-scroll-target="#các-thành-phần-cơ-bản-trong-transformer"><span class="header-section-number">2</span> Các thành phần cơ bản trong Transformer:</a></li>
+  <li><a href="#các-thành-phần-chính" id="toc-các-thành-phần-chính" class="nav-link" data-scroll-target="#các-thành-phần-chính"><span class="header-section-number">3</span> Các thành phần chính:</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Mô hình Transformer</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+<p class="subtitle lead">Việt Nam, 2024</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Transfer model</div>
+    <div class="quarto-category">Forecasting</div>
+  </div>
+  </div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Trong một nghiên cứu của <span class="citation" data-cites="jimengshi2022">(<a href="#ref-jimengshi2022" role="doc-biblioref">Jimeng Shi, Mahek Jain, and Giri Narasimhan 2022</a>)</span> về việc ứng dụng hàng loạt các mô hình thuộc phân lớp <strong>Deep learning</strong> và so sánh để chọn ra mô hình dự đoán tốt nhất chỉ số <em>PM2.5</em> (là chỉ số đo lường lượng hạt bụi li ti có trong không khí với kích thước 2,5 micron trở xuống). Kết quả có bao gồm: “Mô hình <em>Transformer</em> dự đoán tốt nhất cho dự đoán <em>long-term</em> trong tương lai. LSTM và GRU vượt trội hơn RNN cho các dự đoán <em>short-term</em>.”</p>
+<p>Vậy mô hình <em>Transformer</em> là gì ? Chúng ta sẽ học nó ở bài này.</p>
+<section id="mô-hình-transformer" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="mô-hình-transformer"><span class="header-section-number">1</span> Mô hình Transformer:</h2>
+<section id="giới-thiệu" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="giới-thiệu"><span class="header-section-number">1.1</span> Giới thiệu:</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(torch,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>               dplyr,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>               tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Chắc các bạn đã quá quen thuộc với <em>Chatgpt</em> - một công cụ AI mạnh mẽ trong thời gian gần đây với lượng người sử dụng cực kì cao. Như biểu đồ dưới đây, từ khi launched <em>Chatgpt</em> chỉ tốn 5 ngày để đạt 1 triệu người sử dụng và ngoài ra theo thống kê đến tháng 2/2024, <em>Chatgpt</em> đã có tới 1.6 tỉ lượt thăm quan.</p>
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/chatgpt.jpg" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 1: Thời gian để đạt 1 triệu người dùng của Chatgpt
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://wisernotify.com/blog/chatgpt-users/">Link to Image</a>
+  </div>
+</div>
+<p>Ý tưởng ban đầu của <em>Chatgpt</em> chính là dựa trên cấu trúc mô hình <em>Transformer</em> - 1 dạng <em>Deep learning</em> chỉ mới được giới thiệu với thế giới từ năm 2017 nhưng có sức ảnh hưởng rất lớn, nhất là trong lĩnh vực <em>Generative AI</em>.</p>
+<p>Khái niệm về mô hình này được giới thiệu lần đầu vào năm 2017 của các nhà nghiên cứu của Google trong bài tài liệu <a href="https://arxiv.org/pdf/1706.03762">Attention is all you need</a>. Mô hình này dựa trên ý tưởng là xác định các thành phần quan trọng trong <em>sequence</em> và cho phép mô hình đưa ra quyết định dựa trên sự phụ thuộc giữa các phần tử trong đầu vào, bất kể khoảng cách của chúng với nhau, quá trình này gọi là <em>Attention mechanisms</em>. Dựa vào đó, mô hình <em>Transformer</em> sẽ chuyển đổi một chuỗi input thành 1 chuỗi output khác nhưng vẫn đảm bảo giữ lại các đặc điểm quan trọng của <em>sequence</em> đó.</p>
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/input_output.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 2: Input và output của mô hình
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://www.datacamp.com/tutorial/how-transformers-work">Link to Image</a>
+  </div>
+</div>
+<p>Ví dụ với việc dịch thuật văn bản sẽ có những từ trong câu, câu trong đoạn văn đại diện cho ý nghĩa toàn câu, toàn đoạn văn. Hay với về việc phân tích <em>demand</em> trong <em>time series</em>, lượng mua hàng vào những ngày nghỉ, cuối tuần sẽ đưa ra <em>insight</em> tốt hơn vào các ngày bình thường. Như vậy, bạn thấy đó, mô hình <em>Transformer</em> phù hợp với các <em>task</em> thuộc dạng dịch văn bản, dự đoán chuỗi hành động liên tiếp của đối tượng,…</p>
+</section>
+<section id="so-sánh-với-rnn-lstm" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="so-sánh-với-rnn-lstm"><span class="header-section-number">1.2</span> So sánh với RNN, LSTM:</h3>
+<p>Như hình trên, bạn có thể thấy mô hình <em>Transformer</em> cũng gồm <em>Encoder</em> và <em>Decoder</em> giống như cách hoạt động của <em>RNN</em>, <em>LSTM</em>. Nhưng khác nhau ở chỗ, thay vì cơ chế đó hoạt động ở từng timestep liên tục nhau như <em>RNN</em> thì ở <em>Transformer</em> input được đẩy vào cùng 1 lúc (nghĩa là không còn học theo từng timestep nữa). Nhờ vậy, <em>Transformer</em> sẽ xác định được các thành phần quan trọng trong sequence và lựa chọn thông số cho chúng (Hiểu đơn giản như việc bạn cần nghe hết đoạn thoại của người đối diện thì mới hiểu được họ đang nói gì và chọn lọc các <em>keyword</em> để xác định ý chính của đoạn văn đó và đó là ý tưởng chính xây dựng lên mô hình này).</p>
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/transformer_vs_lstm.jpg" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 3: So sánh performance giữa mô hình Transformer và LSTM
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://www.mdpi.com/2079-9292/11/11/1785">Link to Image</a>
+  </div>
+</div>
+<p>Ngoài ra, chính cơ chế <em>Self-attention</em> đã tạo sự khác biệt lớn cho mô hình <em>Transformer</em> so với các mô hình khác. Như hình dưới đây là nghiên cứu của về việc ứng dụng <em>Deep learning</em> để tạo phụ đề cho video. Nghiên cứu đã so sánh performance giữa 2 mô hình (i) Transformer-based model và (ii) LSTM-based model khi <em>hyperparamater tuning</em>. Kết quả cho thấy sự vượt trội của <em>Transformer</em> khi chỉ số <em>accuracy</em> lên tới 97%.</p>
+<p>Tiếp theo, chúng ta sẽ tìm hiểu về các thành phần chính trong mô hình <em>Transformer</em>.</p>
+</section>
+</section>
+<section id="các-thành-phần-cơ-bản-trong-transformer" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="các-thành-phần-cơ-bản-trong-transformer"><span class="header-section-number">2</span> Các thành phần cơ bản trong Transformer:</h2>
+<p>Về nguyên lí hoạt động, mình sẽ chia thành các phần như sau theo cách giải thích cá nhân để giúp mọi người dễ hiểu:</p>
+<ul>
+<li><strong>Thành phần 1: Tensor</strong></li>
+</ul>
+<p>Đầu tiên, các bạn phải hiểu về <em>tensor</em> là gì? Thì nó là một đối tượng toán học nhằm tổng hợp hóa 1 hoặc nhiều chiều trong 1 object. Dạng đơn giản của <em>tensor</em> như là <em>scalar</em> (số đơn giản), <em>vector</em> (chuỗi các số),…</p>
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/tensor.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 4: Tensor là gì
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://nttuan8.com/bai-1-tensor/">Link to Image</a>
+  </div>
+</div>
+<p>Và mục đích của việc chuyển đổi dữ liệu sang dạng <em>tensor</em> là để giúp cho việc tính toán trên GPU nhanh hơn và tăng tốc độ training machine learning model. Ngoài ra, vẫn có các thông tin khác hay về <em>tensor</em> trong <strong>R</strong>, bạn có thể kham khảo link này: <a href="https://skeydan.github.io/Deep-Learning-and-Scientific-Computing-with-R-torch/tensors.html">Tensors</a>.</p>
+<ul>
+<li><strong>Thành phần 2: Embedding và positional encoding</strong></li>
+</ul>
+<p>Khi dữ liệu được đưa vào, nó sẽ trải qua bước <em>embedding</em> (cách để biểu diễn dữ liệu đa chiều trong không gian ít chiều). Nếu dữ liệu của bạn dạng hình ảnh hoặc dạng văn bản thì bước này rất cần thiết (vì các mô hình machine learning chỉ làm việc được với dữ liệu dạng số).</p>
+<p>Ngoài ra, vì mô hình <em>Transformer</em> không có khả năng xử lý dữ liệu theo thứ tự tuần tự (khác với <em>RNN</em> hoặc <em>LSTM</em>), nó sẽ cần một chỉ báo để chỉ ra thứ tự của các bước trong chuỗi, gọi là <em>Postitional encoding</em>. Bạn có thể kham khảo bài viết của <a href="https://machinelearningmastery.com/a-gentle-introduction-to-positional-encoding-in-transformer-models-part-1/">Mehreen Saeed</a>. Và code trong R sẽ ví dự như sau:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>positional_encoding <span class="ot">&lt;-</span> <span class="cf">function</span>(seq_len, d, <span class="at">n =</span> <span class="dv">10000</span>) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  P <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> seq_len, <span class="at">ncol =</span> d)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (k <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>seq_len) {</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">0</span><span class="sc">:</span>(d <span class="sc">/</span> <span class="dv">2</span> <span class="sc">-</span> <span class="dv">1</span>)) {</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      denominator <span class="ot">&lt;-</span> n<span class="sc">^</span>(<span class="dv">2</span> <span class="sc">*</span> i <span class="sc">/</span> d)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>      P[k, <span class="dv">2</span> <span class="sc">*</span> i <span class="sc">+</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">sin</span>(k <span class="sc">/</span> denominator)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      P[k, <span class="dv">2</span> <span class="sc">*</span> i <span class="sc">+</span> <span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fu">cos</span>(k <span class="sc">/</span> denominator)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(P)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<ul>
+<li><strong>Thành phần 3: Self-attention mechanism</strong></li>
+</ul>
+<p>Đây là một cơ chế đặc biệt của Transformer, cho phép mô hình chú ý đến tất cả các bước thời gian trước đó trong chuỗi tại mỗi bước. Điều này giúp mô hình nắm bắt được các <em>mối quan hệ dài hạn</em> và sự liên hệ giữa các bước thời gian với nhau (giúp tránh gặp vấn đề ghi nhớ ngắn hạn như <em>RNN</em>). Bạn có thể xem <em>Self-attention</em> như là cấu trúc chung nhất, còn khi xây dựng mô hình người ta có thể biến tấu tùy vào nhu cầu.</p>
+<p>Như ở <em>Encoder</em> thì sử dụng <em>Multi-Head Attention</em> có thể tính toán chú ý nhiều lần song song (khác với <em>self -attention</em> chỉ tính toán cho <em>single sequence</em>) . Mỗi “đầu” có thể chú ý đến những khía cạnh khác nhau của các mối quan hệ thời gian trong chuỗi. Ví dụ, một đầu có thể chú ý đến các mẫu ngắn hạn (ví dụ: sự dao động hàng ngày), trong khi một đầu khác có thể nắm bắt các xu hướng dài hạn (ví dụ: chu kỳ mùa). Trong R thì đã có sẵn hàm <code>nn_multihead_attention()</code> trong package <code>torch</code>.</p>
+<p>Còn đối với <em>Decoder</em> thì dùng <em>Masked Multi-Head Attention</em> để đảm bảo rằng khi dự báo giá trị tiếp theo trong chuỗi thời gian, mô hình chỉ có thể chú ý đến các bước thời gian trước đó mà không nhìn vào các bước thời gian tương lai. So sánh với <em>Self-attention</em> thì bạn cần thêm bước <em>Masked score</em> thôi. Trong R sẽ được code như sau:</p>
+<div class="columns">
+<div class="column" style="width:40%;">
+<p><img src="img/mask.png" class="img-fluid"></p>
+</div><div class="column" style="width:60%;">
+<div class="cell">
+<details class="code-fold">
+<summary>Show structure</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mask_self_attention <span class="ot">&lt;-</span> <span class="fu">nn_module</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">initialize =</span> <span class="cf">function</span>(embed_dim, num_heads) {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>embed_dim <span class="ot">&lt;-</span> embed_dim</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>num_heads <span class="ot">&lt;-</span> num_heads</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>head_dim <span class="ot">&lt;-</span> embed_dim <span class="sc">/</span> num_heads</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (embed_dim <span class="sc">%%</span> num_heads <span class="sc">!=</span> <span class="dv">0</span>) {</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">"embed_dim must be divisible by num_heads"</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Linear layers for Q, K, V </span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>query <span class="ot">&lt;-</span> <span class="fu">nn_linear</span>(embed_dim, embed_dim, <span class="at">bias =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>key <span class="ot">&lt;-</span> <span class="fu">nn_linear</span>(embed_dim, embed_dim, <span class="at">bias =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>value <span class="ot">&lt;-</span> <span class="fu">nn_linear</span>(embed_dim, embed_dim, <span class="at">bias =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Final linear layer after concatenating heads</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>out <span class="ot">&lt;-</span> <span class="fu">nn_linear</span>(embed_dim, embed_dim, <span class="at">bias =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">forward =</span> <span class="cf">function</span>(x) {</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    batch_size <span class="ot">&lt;-</span> x<span class="sc">$</span><span class="fu">size</span>(<span class="dv">1</span>)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    seq_leng <span class="ot">&lt;-</span> x<span class="sc">$</span><span class="fu">size</span>(<span class="dv">2</span>)</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Linear projections for Q, K, V</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    Q <span class="ot">&lt;-</span> self<span class="sc">$</span><span class="fu">query</span>(x)  <span class="co"># (batch_size, seq_leng, embed_dim)</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    K <span class="ot">&lt;-</span> self<span class="sc">$</span><span class="fu">key</span>(x)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    V <span class="ot">&lt;-</span> self<span class="sc">$</span><span class="fu">value</span>(x)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Reshape to separate heads: (batch_size, num_heads, seq_leng, head_dim)</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    Q <span class="ot">&lt;-</span> Q<span class="sc">$</span><span class="fu">view</span>(<span class="fu">c</span>(batch_size, seq_leng, self<span class="sc">$</span>num_heads, self<span class="sc">$</span>head_dim))<span class="sc">$</span><span class="fu">transpose</span>(<span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    K <span class="ot">&lt;-</span> K<span class="sc">$</span><span class="fu">view</span>(<span class="fu">c</span>(batch_size, seq_leng, self<span class="sc">$</span>num_heads, self<span class="sc">$</span>head_dim))<span class="sc">$</span><span class="fu">transpose</span>(<span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    V <span class="ot">&lt;-</span> V<span class="sc">$</span><span class="fu">view</span>(<span class="fu">c</span>(batch_size, seq_leng, self<span class="sc">$</span>num_heads, self<span class="sc">$</span>head_dim))<span class="sc">$</span><span class="fu">transpose</span>(<span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Compute Matmul and scale:</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    d_k <span class="ot">&lt;-</span> self<span class="sc">$</span>head_dim</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    attention_scores <span class="ot">&lt;-</span> <span class="fu">torch_matmul</span>(Q, <span class="fu">torch_transpose</span>(K, <span class="sc">-</span><span class="dv">1</span>, <span class="sc">-</span><span class="dv">2</span>)) <span class="sc">/</span> <span class="fu">sqrt</span>(d_k)</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Apply mask if provided</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    mask <span class="ot">&lt;-</span> <span class="fu">torch_tril</span>(<span class="fu">torch_ones</span>(<span class="fu">c</span>(seq_leng, seq_leng)))</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(mask)) {</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>      masked_attention_scores <span class="ot">&lt;-</span> attention_scores<span class="sc">$</span><span class="fu">masked_fill</span>(mask <span class="sc">==</span> <span class="dv">0</span>, <span class="sc">-</span><span class="cn">Inf</span>)</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="st">"Warning: No mask provided"</span>)</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Compute attention weights</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    weights <span class="ot">&lt;-</span> <span class="fu">nnf_softmax</span>(masked_attention_scores, <span class="at">dim =</span> <span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Apply weights to V</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    attn_output <span class="ot">&lt;-</span> <span class="fu">torch_matmul</span>(weights, V)  </span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Reshape again:</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    attn_output <span class="ot">&lt;-</span> attn_output<span class="sc">$</span><span class="fu">transpose</span>(<span class="dv">2</span>, <span class="dv">3</span>)<span class="sc">$</span><span class="fu">contiguous</span>()<span class="sc">$</span><span class="fu">view</span>(<span class="fu">c</span>(batch_size, seq_leng, self<span class="sc">$</span>embed_dim))</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Final linear layer</span></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    output <span class="ot">&lt;-</span> self<span class="sc">$</span><span class="fu">out</span>(attn_output)</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(output)</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</div>
+</div>
+<p>Ngoài ra, trong <em>Decoder</em> còn có <em>Cross-attention</em> nhưng nó hơi phức tạp nên mình sẽ giới thiệu sau.</p>
+<ul>
+<li><strong>Thành phần 4: Sub-layer</strong></li>
+</ul>
+<p>Bạn sẽ để ý thấy các phép tính toán trong mô hình sẽ luôn kèm theo bộ phận <strong>Add &amp; Norm</strong> để lưu giữ residual và cộng vào output được tạo sau khi kết thúc các phép tính đó. Việc này giúp giảm thiểu vấn đề <em>vanishing gradient</em> đã đề cập ở trang trước và giúp cho mô hình học sâu hơn. Trong R bạn chỉ cần thêm lớp này bằng hàm <code>nn_layer_norm()</code>.</p>
+<ul>
+<li><strong>Thành phần 5: Feed-Forward Neural Networks</strong></li>
+</ul>
+<p>Sau khi tính toán chú ý, đại diện của từng bước thời gian sẽ được đưa qua một mạng nơ-ron Feed-Forward (FFN), thường bao gồm: (i) Một phép biến đổi tuyến tính (lớp kết nối đầy đủ), (ii) Hàm kích hoạt ReLU và (iii) Một phép biến đổi tuyến tính nữa. Trong R sẽ code như này:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>feed_forward <span class="ot">&lt;-</span> <span class="fu">nn_sequential</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>      <span class="fu">nn_linear</span>(d_model, d_ff),</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>      <span class="fu">nn_relu</span>(),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">nn_linear</span>(d_ff, d_model)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="các-thành-phần-chính" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="các-thành-phần-chính"><span class="header-section-number">3</span> Các thành phần chính:</h2>
+<p>Sau khi hiểu rõ các thành phần cần thiết, ta sẽ ngó qua <em>workflow</em> đầy đủ của mô hình <em>Transformer</em>.Nếu bạn chưa hiểu thì có thể kham khảo link này <a href="https://www.datacamp.com/tutorial/how-transformers-work">datacamp</a></p>
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/workflow.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 6: Workflow của mô hình Transformer
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://arxiv.org/pdf/2204.11115">Link to Image</a>
+  </div>
+</div>
+<p>Mình sẽ trình bày theo cách cá nhân để giúp mọi người hiểu rõ hơn:</p>
+<ul>
+<li><p><strong>Bước 1: Xử lí input</strong>: sẽ gồm bước <em>Embedding</em> dữ liệu sau đó cộng thêm <em>Positional encoding</em>. Lưu ý: input cho <em>encoder</em> và <em>decoder</em> là khác nhau, <em>encoder</em> sẽ nhận đầu vào là các biến dự báo (ví dụ: giá trị lag của time series,…) và <em>decoder</em> sẽ nhận đầu vào là biến target (là kết quả bạn mong muốn mô hình dự báo đúng).</p></li>
+<li><p><strong>Bước 2: Encoder output</strong>: Khi dữ liệu đi vào <em>encoder block</em> thì sẽ trải qua <em>lớp </em>multi-head attention* và <em>feed forward</em> và các lớp sub-layer <em>normalization</em>. Lưu ý: khi normalizing thì phải normalize (kết quả từ lớp trước + input ban đầu), bạn có thể nhìn ảnh dưới đây để dễ hiểu hơn.</p></li>
+</ul>
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/normalize.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 7: Normalization và residual connection sau lớp Multi-Head Attention
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://www.datacamp.com/tutorial/how-transformers-work?utm_adgroupid=157156376071&amp;utm_keyword=&amp;utm_matchtype=&amp;utm_network=g&amp;utm_adpostion=&amp;utm_targetid=aud-1685385913382:dsa-2218886984380&amp;utm_loc_interest_ms=&amp;utm_loc_physical_ms=9198559&amp;utm_content=&amp;gad_source=1">Link to Image</a>
+  </div>
+</div>
+<ul>
+<li><strong>Bước 3: Add encoder output to decoder</strong>: Sau khi <em>Decoder</em> thực hiện tính toán cho dữ liệu thông qua layer <em>Mask multi-head attention</em> và <em>Normalization</em> thì sẽ đến bước <em>Cross-attention</em> (Mặc dù ở hình trên hoặc các tài liệu khác mà bạn từng đọc sẽ để là layer <em>multi-head attention</em> nhưng thực chất layer <em>cross-attention</em> mới đúng).</li>
+</ul>
+<p>Vậy <em>cross-attention</em> có gì đặc biệt? Ta sẽ nhìn sơ qua cấu trúc của nó thì sẽ nhận ra điểm khác biệt so với <em>self-attention</em> thông thường là <em>cross-attention</em> sẽ nhận dữ liệu từ 2 nguồn: (i) output của encoder gán cho <em>Q</em> và (ii) input của decoder gán cho <em>V</em>, <em>K</em>.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Cross attention:</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Self attention:</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/cross_attention.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 8: Workflow của Cross-attention
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://magazine.sebastianraschka.com/p/understanding-and-coding-self-attention">Link to Image</a>
+  </div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/self_attention.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 9: Workflow của Self-attention
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://magazine.sebastianraschka.com/p/understanding-and-coding-self-attention">Link to Image</a>
+  </div>
+</div>
+</div>
+</div>
+</div>
+<p>Về code trong R sẽ như sau:</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show structure</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cross_attention <span class="ot">&lt;-</span> <span class="fu">nn_module</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">initialize =</span> <span class="cf">function</span>(embed_dim, num_heads) {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>embed_dim <span class="ot">&lt;-</span> embed_dim</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>num_heads <span class="ot">&lt;-</span> num_heads</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>head_dim <span class="ot">&lt;-</span> embed_dim <span class="sc">/</span> num_heads</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (self<span class="sc">$</span>head_dim <span class="sc">%%</span> <span class="dv">1</span> <span class="sc">!=</span> <span class="dv">0</span>) {</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">"embed_dim must be divisible by num_heads"</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>query <span class="ot">&lt;-</span> <span class="fu">nn_linear</span>(embed_dim, embed_dim, <span class="at">bias =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>key <span class="ot">&lt;-</span> <span class="fu">nn_linear</span>(embed_dim, embed_dim, <span class="at">bias =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>value <span class="ot">&lt;-</span> <span class="fu">nn_linear</span>(embed_dim, embed_dim, <span class="at">bias =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>out <span class="ot">&lt;-</span> <span class="fu">nn_linear</span>(embed_dim, embed_dim, <span class="at">bias =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">forward =</span> <span class="cf">function</span>(decoder_input, encoder_output, <span class="at">mask =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    batch_size <span class="ot">&lt;-</span> decoder_input<span class="sc">$</span><span class="fu">size</span>(<span class="dv">1</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    seq_leng_dec <span class="ot">&lt;-</span> decoder_input<span class="sc">$</span><span class="fu">size</span>(<span class="dv">2</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    seq_leng_enc <span class="ot">&lt;-</span> encoder_output<span class="sc">$</span><span class="fu">size</span>(<span class="dv">2</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    Q <span class="ot">&lt;-</span> self<span class="sc">$</span><span class="fu">query</span>(decoder_input)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    K <span class="ot">&lt;-</span> self<span class="sc">$</span><span class="fu">key</span>(encoder_output)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    V <span class="ot">&lt;-</span> self<span class="sc">$</span><span class="fu">value</span>(encoder_output)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    Q <span class="ot">&lt;-</span> Q<span class="sc">$</span><span class="fu">view</span>(<span class="fu">c</span>(batch_size, seq_leng_dec, self<span class="sc">$</span>num_heads, self<span class="sc">$</span>head_dim))<span class="sc">$</span><span class="fu">transpose</span>(<span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    K <span class="ot">&lt;-</span> K<span class="sc">$</span><span class="fu">view</span>(<span class="fu">c</span>(batch_size, seq_leng_enc, self<span class="sc">$</span>num_heads, self<span class="sc">$</span>head_dim))<span class="sc">$</span><span class="fu">transpose</span>(<span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    V <span class="ot">&lt;-</span> V<span class="sc">$</span><span class="fu">view</span>(<span class="fu">c</span>(batch_size, seq_leng_enc, self<span class="sc">$</span>num_heads, self<span class="sc">$</span>head_dim))<span class="sc">$</span><span class="fu">transpose</span>(<span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    d_k <span class="ot">&lt;-</span> self<span class="sc">$</span>head_dim</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    attention_scores <span class="ot">&lt;-</span> <span class="fu">torch_matmul</span>(Q, <span class="fu">torch_transpose</span>(K, <span class="sc">-</span><span class="dv">1</span>, <span class="sc">-</span><span class="dv">2</span>)) <span class="sc">/</span> <span class="fu">sqrt</span>(d_k)</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    weights <span class="ot">&lt;-</span> <span class="fu">nnf_softmax</span>(attention_scores, <span class="at">dim =</span> <span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    attn_output <span class="ot">&lt;-</span> <span class="fu">torch_matmul</span>(weights, V)</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>    attn_output <span class="ot">&lt;-</span> attn_output<span class="sc">$</span><span class="fu">transpose</span>(<span class="dv">2</span>, <span class="dv">3</span>)<span class="sc">$</span><span class="fu">contiguous</span>()<span class="sc">$</span><span class="fu">view</span>(<span class="fu">c</span>(batch_size, seq_leng_dec, self<span class="sc">$</span>embed_dim))</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>    output <span class="ot">&lt;-</span> self<span class="sc">$</span><span class="fu">out</span>(attn_output)</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(output)</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Kết quả sau đó sẽ được đẩy qua layer <em>feed forward</em> và <em>normalization</em> để trả về output (giống như <em>encoder</em>).</p>
+<ul>
+<li><strong>Bước 4: Output of decoder</strong>: Cuối cùng, output của <em>decoder</em> sẽ qua 2 layer <em>linear</em> và <em>softmax</em> để tìm ra output có xác suất cao nhất (nghĩa là output đó sẽ có ý nghĩa nhất trong <em>sequence</em> để dự báo cho các step sau).</li>
+</ul>
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/output.png" style="max-width: 40%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 10: Output của mô hình
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://www.datacamp.com/tutorial/how-transformers-work">Link to Image</a>
+  </div>
+</div>
+<p>Như vậy, chúng ta đã lướt sơ qua cách hoạt động và các lưu ý của mô hình <em>Transformer</em>. Tiếp theo, mình sẽ thử xây dựng trong <strong>R</strong> và dùng nó để xử lí task dự báo chuỗi thời gian.</p>
+
+
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go to Next Page</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Tahoma', sans-serif;
+            display: flex;
+            flex-direction: column;  /* Stack content and footnote vertically */
+            justify-content: center;  /* Center content vertically */
+            align-items: center;      /* Center content horizontally */
+            margin: 0;
+            background-color: $secondary-color;
+            box-sizing: border-box;
+            min-height: 80vh; /* Adjusted to 80vh to ensure it's not too high */
+        }
+
+        /* Container Styling (Main Content) */
+        .container {
+            text-align: center;
+            padding: 20px 40px; /* Adjust padding for more compactness */
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            width: auto;  /* Auto width to fit content */
+            max-width: 380px;  /* Adjusted max-width for a smaller container */
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 20px;  /* Space from the top of the page */
+        }
+
+        /* Link Styling */
+        .link {
+            font-size: 20px;  /* Adjusted font size for readability */
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 12px 30px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .link:hover {
+            color: #0056b3;
+            text-decoration: none;
+            background-color: #e6f0ff;
+        }
+
+        /* Arrow Styling */
+        .arrow {
+            margin-left: 12px;
+            font-size: 24px;
+            transition: transform 0.3s ease, font-size 0.3s ease;
+        }
+
+        .link:hover .arrow {
+            transform: translateX(8px);
+            font-size: 26px;
+        }
+
+        /* Focus State for Accessibility */
+        .link:focus {
+            outline: 2px solid #0056b3;
+        }
+
+        /* Footer Styling (Footnote) */
+        .footer {
+            font-size: 14px;
+            color: #777;
+            margin-top: 20px;  /* Space between content and footnote */
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Mobile-Friendly Adjustments */
+        @media (max-width: 600px) {
+            .link {
+                font-size: 18px;
+                padding: 8px 15px;  /* Smaller padding for mobile devices */
+            }
+
+            .arrow {
+                font-size: 18px;
+                margin-left: 8px;
+            }
+
+            .container {
+                padding: 15px 30px;  /* Smaller padding on mobile */
+                max-width: 90%;  /* Ensure container fits better on small screens */
+            }
+        }
+    </style>
+
+
+    <div class="container">
+        <a href="https://loccx78vn.github.io/Transformer_model/practice.html" class="link" tabindex="0">
+            Go to Next Page
+            <span class="arrow">➔</span>
+        </a>
+    </div>
+
+
+
+
+<!-- -->
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-jimengshi2022" class="csl-entry" role="listitem">
+Jimeng Shi, Mahek Jain, and Giri Narasimhan. 2022. <span>“Time Series Forecasting (TSF) Using Various Deep Learning Models,”</span> August. <a href="https://arxiv.org/pdf/2204.11115">https://arxiv.org/pdf/2204.11115</a>.
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb6" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Mô hình Transformer"</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Việt Nam, 2024"</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="an">categories:</span><span class="co"> ["Transfer model", "Forecasting"]</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">     code-tools: true</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">     code-fold: true</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="an">number-sections:</span><span class="co"> true</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>Trong một nghiên cứu của <span class="co">[</span><span class="ot">@jimengshi2022</span><span class="co">]</span> về việc ứng dụng hàng loạt các mô hình thuộc phân lớp **Deep learning** và so sánh để chọn ra mô hình dự đoán tốt nhất chỉ số *PM2.5* (là chỉ số đo lường lượng hạt bụi li ti có trong không khí với kích thước 2,5 micron trở xuống). Kết quả có bao gồm: "Mô hình *Transformer* dự đoán tốt nhất cho dự đoán *long-term* trong tương lai. LSTM và GRU vượt trội hơn RNN cho các dự đoán *short-term*."</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>Vậy mô hình *Transformer* là gì ? Chúng ta sẽ học nó ở bài này.</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## Mô hình Transformer:</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="fu">### Giới thiệu:</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(torch,</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>               dplyr,</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>               tidyverse)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>Chắc các bạn đã quá quen thuộc với *Chatgpt* - một công cụ AI mạnh mẽ trong thời gian gần đây với lượng người sử dụng cực kì cao. Như biểu đồ dưới đây, từ khi launched *Chatgpt* chỉ tốn 5 ngày để đạt 1 triệu người sử dụng và ngoài ra theo thống kê đến tháng 2/2024, *Chatgpt* đã có tới 1.6 tỉ lượt thăm quan.</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;div style="text-align: center; margin-bottom: 20px;"&gt;</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;img src="img/chatgpt.jpg" style="max-width: 100%; height: auto; display: block; margin: 0 auto;"&gt;</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;!-- Picture Name --&gt;</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div style="text-align: left; margin-top: 10px;"&gt;</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a><span class="in">    Hình 1: Thời gian để đạt 1 triệu người dùng của Chatgpt</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;!-- Source Link --&gt;</span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div style="text-align: right; font-style: italic; margin-top: 5px;"&gt;</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a><span class="in">    Source: &lt;a href="https://wisernotify.com/blog/chatgpt-users/"&gt;Link to Image&lt;/a&gt;</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/div&gt;</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>Ý tưởng ban đầu của *Chatgpt* chính là dựa trên cấu trúc mô hình *Transformer* - 1 dạng *Deep learning* chỉ mới được giới thiệu với thế giới từ năm 2017 nhưng có sức ảnh hưởng rất lớn, nhất là trong lĩnh vực *Generative AI*.</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>Khái niệm về mô hình này được giới thiệu lần đầu vào năm 2017 của các nhà nghiên cứu của Google trong bài tài liệu <span class="co">[</span><span class="ot">Attention is all you need</span><span class="co">](https://arxiv.org/pdf/1706.03762)</span>. Mô hình này dựa trên ý tưởng là xác định các thành phần quan trọng trong *sequence* và cho phép mô hình đưa ra quyết định dựa trên sự phụ thuộc giữa các phần tử trong đầu vào, bất kể khoảng cách của chúng với nhau, quá trình này gọi là *Attention mechanisms*. Dựa vào đó, mô hình *Transformer* sẽ chuyển đổi một chuỗi input thành 1 chuỗi output khác nhưng vẫn đảm bảo giữ lại các đặc điểm quan trọng của *sequence* đó.</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;div style="text-align: center; margin-bottom: 20px;"&gt;</span></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;img src="img/input_output.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;"&gt;</span></span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;!-- Picture Name --&gt;</span></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div style="text-align: left; margin-top: 10px;"&gt;</span></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a><span class="in">    Hình 2: Input và output của mô hình</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;!-- Source Link --&gt;</span></span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div style="text-align: right; font-style: italic; margin-top: 5px;"&gt;</span></span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a><span class="in">    Source: &lt;a href="https://www.datacamp.com/tutorial/how-transformers-work"&gt;Link to Image&lt;/a&gt;</span></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/div&gt;</span></span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>Ví dụ với việc dịch thuật văn bản sẽ có những từ trong câu, câu trong đoạn văn đại diện cho ý nghĩa toàn câu, toàn đoạn văn. Hay với về việc phân tích *demand* trong *time series*, lượng mua hàng vào những ngày nghỉ, cuối tuần sẽ đưa ra *insight* tốt hơn vào các ngày bình thường. Như vậy, bạn thấy đó, mô hình *Transformer* phù hợp với các *task* thuộc dạng dịch văn bản, dự đoán chuỗi hành động liên tiếp của đối tượng,...</span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a><span class="fu">### So sánh với RNN, LSTM:</span></span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>Như hình trên, bạn có thể thấy mô hình *Transformer* cũng gồm *Encoder* và *Decoder* giống như cách hoạt động của *RNN*, *LSTM*. Nhưng khác nhau ở chỗ, thay vì cơ chế đó hoạt động ở từng timestep liên tục nhau như *RNN* thì ở *Transformer* input được đẩy vào cùng 1 lúc (nghĩa là không còn học theo từng timestep nữa). Nhờ vậy, *Transformer* sẽ xác định được các thành phần quan trọng trong sequence và lựa chọn thông số cho chúng (Hiểu đơn giản như việc bạn cần nghe hết đoạn thoại của người đối diện thì mới hiểu được họ đang nói gì và chọn lọc các *keyword* để xác định ý chính của đoạn văn đó và đó là ý tưởng chính xây dựng lên mô hình này).</span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;div style="text-align: center; margin-bottom: 20px;"&gt;</span></span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;img src="img/transformer_vs_lstm.jpg" style="max-width: 100%; height: auto; display: block; margin: 0 auto;"&gt;</span></span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;!-- Picture Name --&gt;</span></span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div style="text-align: left; margin-top: 10px;"&gt;</span></span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a><span class="in">    Hình 3: So sánh performance giữa mô hình Transformer và LSTM</span></span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;!-- Source Link --&gt;</span></span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div style="text-align: right; font-style: italic; margin-top: 5px;"&gt;</span></span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a><span class="in">    Source: &lt;a href="https://www.mdpi.com/2079-9292/11/11/1785"&gt;Link to Image&lt;/a&gt;</span></span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/div&gt;</span></span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a>Ngoài ra, chính cơ chế *Self-attention* đã tạo sự khác biệt lớn cho mô hình *Transformer* so với các mô hình khác. Như hình dưới đây là nghiên cứu của về việc ứng dụng *Deep learning* để tạo phụ đề cho video. Nghiên cứu đã so sánh performance giữa 2 mô hình (i) Transformer-based model và (ii) LSTM-based model khi *hyperparamater tuning*. Kết quả cho thấy sự vượt trội của *Transformer* khi chỉ số *accuracy* lên tới 97%.</span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a>Tiếp theo, chúng ta sẽ tìm hiểu về các thành phần chính trong mô hình *Transformer*.</span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a><span class="fu">## Các thành phần cơ bản trong Transformer:</span></span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a>Về nguyên lí hoạt động, mình sẽ chia thành các phần như sau theo cách giải thích cá nhân để giúp mọi người dễ hiểu:</span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Thành phần 1: Tensor**</span>
+<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a>Đầu tiên, các bạn phải hiểu về *tensor* là gì? Thì nó là một đối tượng toán học nhằm tổng hợp hóa 1 hoặc nhiều chiều trong 1 object. Dạng đơn giản của *tensor* như là *scalar* (số đơn giản), *vector* (chuỗi các số),... </span>
+<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;div style="text-align: center; margin-bottom: 20px;"&gt;</span></span>
+<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;img src="img/tensor.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;"&gt;</span></span>
+<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;!-- Picture Name --&gt;</span></span>
+<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div style="text-align: left; margin-top: 10px;"&gt;</span></span>
+<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a><span class="in">    Hình 4: Tensor là gì</span></span>
+<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
+<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;!-- Source Link --&gt;</span></span>
+<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div style="text-align: right; font-style: italic; margin-top: 5px;"&gt;</span></span>
+<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a><span class="in">    Source: &lt;a href="https://nttuan8.com/bai-1-tensor/"&gt;Link to Image&lt;/a&gt;</span></span>
+<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
+<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/div&gt;</span></span>
+<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a>Và mục đích của việc chuyển đổi dữ liệu sang dạng *tensor* là để giúp cho việc tính toán trên GPU nhanh hơn và tăng tốc độ training machine learning model. Ngoài ra, vẫn có các thông tin khác hay về *tensor* trong **R**, bạn có thể kham khảo link này: <span class="co">[</span><span class="ot">Tensors</span><span class="co">](https://skeydan.github.io/Deep-Learning-and-Scientific-Computing-with-R-torch/tensors.html)</span>.</span>
+<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Thành phần 2: Embedding và positional encoding**</span>
+<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a>Khi dữ liệu được đưa vào, nó sẽ trải qua bước *embedding* (cách để biểu diễn dữ liệu đa chiều trong không gian ít chiều). Nếu dữ liệu của bạn dạng hình ảnh hoặc dạng văn bản thì bước này rất cần thiết (vì các mô hình machine learning chỉ làm việc được với dữ liệu dạng số).</span>
+<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a>Ngoài ra, vì mô hình *Transformer* không có khả năng xử lý dữ liệu theo thứ tự tuần tự (khác với *RNN* hoặc *LSTM*), nó sẽ cần một chỉ báo để chỉ ra thứ tự của các bước trong chuỗi, gọi là *Postitional encoding*. Bạn có thể kham khảo bài viết của <span class="co">[</span><span class="ot">Mehreen Saeed</span><span class="co">](https://machinelearningmastery.com/a-gentle-introduction-to-positional-encoding-in-transformer-models-part-1/)</span>. Và code trong R sẽ ví dự như sau:</span>
+<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb6-129"><a href="#cb6-129" aria-hidden="true" tabindex="-1"></a>positional_encoding <span class="ot">&lt;-</span> <span class="cf">function</span>(seq_len, d, <span class="at">n =</span> <span class="dv">10000</span>) {</span>
+<span id="cb6-130"><a href="#cb6-130" aria-hidden="true" tabindex="-1"></a>  P <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">0</span>, <span class="at">nrow =</span> seq_len, <span class="at">ncol =</span> d)</span>
+<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (k <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>seq_len) {</span>
+<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">0</span><span class="sc">:</span>(d <span class="sc">/</span> <span class="dv">2</span> <span class="sc">-</span> <span class="dv">1</span>)) {</span>
+<span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a>      denominator <span class="ot">&lt;-</span> n<span class="sc">^</span>(<span class="dv">2</span> <span class="sc">*</span> i <span class="sc">/</span> d)</span>
+<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a>      P[k, <span class="dv">2</span> <span class="sc">*</span> i <span class="sc">+</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">sin</span>(k <span class="sc">/</span> denominator)</span>
+<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a>      P[k, <span class="dv">2</span> <span class="sc">*</span> i <span class="sc">+</span> <span class="dv">2</span>] <span class="ot">&lt;-</span> <span class="fu">cos</span>(k <span class="sc">/</span> denominator)</span>
+<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(P)</span>
+<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Thành phần 3: Self-attention mechanism** </span>
+<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a>Đây là một cơ chế đặc biệt của Transformer, cho phép mô hình chú ý đến tất cả các bước thời gian trước đó trong chuỗi tại mỗi bước. Điều này giúp mô hình nắm bắt được các *mối quan hệ dài hạn* và sự liên hệ giữa các bước thời gian với nhau (giúp tránh gặp vấn đề ghi nhớ ngắn hạn như *RNN*). Bạn có thể xem *Self-attention* như là cấu trúc chung nhất, còn khi xây dựng mô hình người ta có thể biến tấu tùy vào nhu cầu. </span>
+<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a>Như ở *Encoder* thì sử dụng *Multi-Head Attention* có thể tính toán chú ý nhiều lần song song (khác với *self -attention* chỉ tính toán cho *single sequence*) . Mỗi "đầu" có thể chú ý đến những khía cạnh khác nhau của các mối quan hệ thời gian trong chuỗi. Ví dụ, một đầu có thể chú ý đến các mẫu ngắn hạn (ví dụ: sự dao động hàng ngày), trong khi một đầu khác có thể nắm bắt các xu hướng dài hạn (ví dụ: chu kỳ mùa). Trong R thì đã có sẵn hàm <span class="in">`nn_multihead_attention()`</span> trong package <span class="in">`torch`</span>.</span>
+<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a>Còn đối với *Decoder* thì dùng *Masked Multi-Head Attention* để đảm bảo rằng khi dự báo giá trị tiếp theo trong chuỗi thời gian, mô hình chỉ có thể chú ý đến các bước thời gian trước đó mà không nhìn vào các bước thời gian tương lai. So sánh với *Self-attention* thì bạn cần thêm bước *Masked score* thôi. Trong R sẽ được code như sau:</span>
+<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a>:::: {.columns}</span>
+<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a>::: {.column width="40%"}</span>
+<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a><span class="al">![](img/mask.png)</span></span>
+<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a>::: {.column width="60%"}</span>
+<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Show structure"</span></span>
+<span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a>mask_self_attention <span class="ot">&lt;-</span> <span class="fu">nn_module</span>(</span>
+<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a>  <span class="at">initialize =</span> <span class="cf">function</span>(embed_dim, num_heads) {</span>
+<span id="cb6-166"><a href="#cb6-166" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>embed_dim <span class="ot">&lt;-</span> embed_dim</span>
+<span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>num_heads <span class="ot">&lt;-</span> num_heads</span>
+<span id="cb6-168"><a href="#cb6-168" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>head_dim <span class="ot">&lt;-</span> embed_dim <span class="sc">/</span> num_heads</span>
+<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-170"><a href="#cb6-170" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (embed_dim <span class="sc">%%</span> num_heads <span class="sc">!=</span> <span class="dv">0</span>) {</span>
+<span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">"embed_dim must be divisible by num_heads"</span>)</span>
+<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-174"><a href="#cb6-174" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Linear layers for Q, K, V </span></span>
+<span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>query <span class="ot">&lt;-</span> <span class="fu">nn_linear</span>(embed_dim, embed_dim, <span class="at">bias =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-176"><a href="#cb6-176" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>key <span class="ot">&lt;-</span> <span class="fu">nn_linear</span>(embed_dim, embed_dim, <span class="at">bias =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-177"><a href="#cb6-177" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>value <span class="ot">&lt;-</span> <span class="fu">nn_linear</span>(embed_dim, embed_dim, <span class="at">bias =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-178"><a href="#cb6-178" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-179"><a href="#cb6-179" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Final linear layer after concatenating heads</span></span>
+<span id="cb6-180"><a href="#cb6-180" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>out <span class="ot">&lt;-</span> <span class="fu">nn_linear</span>(embed_dim, embed_dim, <span class="at">bias =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-181"><a href="#cb6-181" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-182"><a href="#cb6-182" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-184"><a href="#cb6-184" aria-hidden="true" tabindex="-1"></a>  <span class="at">forward =</span> <span class="cf">function</span>(x) {</span>
+<span id="cb6-185"><a href="#cb6-185" aria-hidden="true" tabindex="-1"></a>    batch_size <span class="ot">&lt;-</span> x<span class="sc">$</span><span class="fu">size</span>(<span class="dv">1</span>)</span>
+<span id="cb6-186"><a href="#cb6-186" aria-hidden="true" tabindex="-1"></a>    seq_leng <span class="ot">&lt;-</span> x<span class="sc">$</span><span class="fu">size</span>(<span class="dv">2</span>)</span>
+<span id="cb6-187"><a href="#cb6-187" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-188"><a href="#cb6-188" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Linear projections for Q, K, V</span></span>
+<span id="cb6-189"><a href="#cb6-189" aria-hidden="true" tabindex="-1"></a>    Q <span class="ot">&lt;-</span> self<span class="sc">$</span><span class="fu">query</span>(x)  <span class="co"># (batch_size, seq_leng, embed_dim)</span></span>
+<span id="cb6-190"><a href="#cb6-190" aria-hidden="true" tabindex="-1"></a>    K <span class="ot">&lt;-</span> self<span class="sc">$</span><span class="fu">key</span>(x)</span>
+<span id="cb6-191"><a href="#cb6-191" aria-hidden="true" tabindex="-1"></a>    V <span class="ot">&lt;-</span> self<span class="sc">$</span><span class="fu">value</span>(x)</span>
+<span id="cb6-192"><a href="#cb6-192" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-193"><a href="#cb6-193" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Reshape to separate heads: (batch_size, num_heads, seq_leng, head_dim)</span></span>
+<span id="cb6-194"><a href="#cb6-194" aria-hidden="true" tabindex="-1"></a>    Q <span class="ot">&lt;-</span> Q<span class="sc">$</span><span class="fu">view</span>(<span class="fu">c</span>(batch_size, seq_leng, self<span class="sc">$</span>num_heads, self<span class="sc">$</span>head_dim))<span class="sc">$</span><span class="fu">transpose</span>(<span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb6-195"><a href="#cb6-195" aria-hidden="true" tabindex="-1"></a>    K <span class="ot">&lt;-</span> K<span class="sc">$</span><span class="fu">view</span>(<span class="fu">c</span>(batch_size, seq_leng, self<span class="sc">$</span>num_heads, self<span class="sc">$</span>head_dim))<span class="sc">$</span><span class="fu">transpose</span>(<span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb6-196"><a href="#cb6-196" aria-hidden="true" tabindex="-1"></a>    V <span class="ot">&lt;-</span> V<span class="sc">$</span><span class="fu">view</span>(<span class="fu">c</span>(batch_size, seq_leng, self<span class="sc">$</span>num_heads, self<span class="sc">$</span>head_dim))<span class="sc">$</span><span class="fu">transpose</span>(<span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb6-197"><a href="#cb6-197" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-198"><a href="#cb6-198" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Compute Matmul and scale:</span></span>
+<span id="cb6-199"><a href="#cb6-199" aria-hidden="true" tabindex="-1"></a>    d_k <span class="ot">&lt;-</span> self<span class="sc">$</span>head_dim</span>
+<span id="cb6-200"><a href="#cb6-200" aria-hidden="true" tabindex="-1"></a>    attention_scores <span class="ot">&lt;-</span> <span class="fu">torch_matmul</span>(Q, <span class="fu">torch_transpose</span>(K, <span class="sc">-</span><span class="dv">1</span>, <span class="sc">-</span><span class="dv">2</span>)) <span class="sc">/</span> <span class="fu">sqrt</span>(d_k)</span>
+<span id="cb6-201"><a href="#cb6-201" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-202"><a href="#cb6-202" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Apply mask if provided</span></span>
+<span id="cb6-203"><a href="#cb6-203" aria-hidden="true" tabindex="-1"></a>    mask <span class="ot">&lt;-</span> <span class="fu">torch_tril</span>(<span class="fu">torch_ones</span>(<span class="fu">c</span>(seq_leng, seq_leng)))</span>
+<span id="cb6-204"><a href="#cb6-204" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-205"><a href="#cb6-205" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.null</span>(mask)) {</span>
+<span id="cb6-206"><a href="#cb6-206" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb6-207"><a href="#cb6-207" aria-hidden="true" tabindex="-1"></a>      masked_attention_scores <span class="ot">&lt;-</span> attention_scores<span class="sc">$</span><span class="fu">masked_fill</span>(mask <span class="sc">==</span> <span class="dv">0</span>, <span class="sc">-</span><span class="cn">Inf</span>)</span>
+<span id="cb6-208"><a href="#cb6-208" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb6-209"><a href="#cb6-209" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb6-210"><a href="#cb6-210" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="st">"Warning: No mask provided"</span>)</span>
+<span id="cb6-211"><a href="#cb6-211" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-212"><a href="#cb6-212" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-213"><a href="#cb6-213" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Compute attention weights</span></span>
+<span id="cb6-214"><a href="#cb6-214" aria-hidden="true" tabindex="-1"></a>    weights <span class="ot">&lt;-</span> <span class="fu">nnf_softmax</span>(masked_attention_scores, <span class="at">dim =</span> <span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb6-215"><a href="#cb6-215" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-216"><a href="#cb6-216" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Apply weights to V</span></span>
+<span id="cb6-217"><a href="#cb6-217" aria-hidden="true" tabindex="-1"></a>    attn_output <span class="ot">&lt;-</span> <span class="fu">torch_matmul</span>(weights, V)  </span>
+<span id="cb6-218"><a href="#cb6-218" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-219"><a href="#cb6-219" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Reshape again:</span></span>
+<span id="cb6-220"><a href="#cb6-220" aria-hidden="true" tabindex="-1"></a>    attn_output <span class="ot">&lt;-</span> attn_output<span class="sc">$</span><span class="fu">transpose</span>(<span class="dv">2</span>, <span class="dv">3</span>)<span class="sc">$</span><span class="fu">contiguous</span>()<span class="sc">$</span><span class="fu">view</span>(<span class="fu">c</span>(batch_size, seq_leng, self<span class="sc">$</span>embed_dim))</span>
+<span id="cb6-221"><a href="#cb6-221" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-222"><a href="#cb6-222" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Final linear layer</span></span>
+<span id="cb6-223"><a href="#cb6-223" aria-hidden="true" tabindex="-1"></a>    output <span class="ot">&lt;-</span> self<span class="sc">$</span><span class="fu">out</span>(attn_output)</span>
+<span id="cb6-224"><a href="#cb6-224" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(output)</span>
+<span id="cb6-225"><a href="#cb6-225" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-226"><a href="#cb6-226" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-227"><a href="#cb6-227" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-228"><a href="#cb6-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-229"><a href="#cb6-229" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-230"><a href="#cb6-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-231"><a href="#cb6-231" aria-hidden="true" tabindex="-1"></a>::::</span>
+<span id="cb6-232"><a href="#cb6-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-233"><a href="#cb6-233" aria-hidden="true" tabindex="-1"></a>Ngoài ra, trong *Decoder* còn có *Cross-attention* nhưng nó hơi phức tạp nên mình sẽ giới thiệu sau.</span>
+<span id="cb6-234"><a href="#cb6-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-235"><a href="#cb6-235" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Thành phần 4: Sub-layer**</span>
+<span id="cb6-236"><a href="#cb6-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-237"><a href="#cb6-237" aria-hidden="true" tabindex="-1"></a>Bạn sẽ để ý thấy các phép tính toán trong mô hình sẽ luôn kèm theo bộ phận **Add &amp; Norm** để lưu giữ residual và cộng vào output được tạo sau khi kết thúc các phép tính đó. Việc này giúp giảm thiểu vấn đề *vanishing gradient* đã đề cập ở trang trước và giúp cho mô hình học sâu hơn. Trong R bạn chỉ cần thêm lớp này bằng hàm <span class="in">`nn_layer_norm()`</span>.</span>
+<span id="cb6-238"><a href="#cb6-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-239"><a href="#cb6-239" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Thành phần 5: Feed-Forward Neural Networks**</span>
+<span id="cb6-240"><a href="#cb6-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-241"><a href="#cb6-241" aria-hidden="true" tabindex="-1"></a>Sau khi tính toán chú ý, đại diện của từng bước thời gian sẽ được đưa qua một mạng nơ-ron Feed-Forward (FFN), thường bao gồm: (i) Một phép biến đổi tuyến tính (lớp kết nối đầy đủ), (ii) Hàm kích hoạt ReLU và (iii) Một phép biến đổi tuyến tính nữa. Trong R sẽ code như này:</span>
+<span id="cb6-242"><a href="#cb6-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-245"><a href="#cb6-245" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-246"><a href="#cb6-246" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb6-247"><a href="#cb6-247" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb6-248"><a href="#cb6-248" aria-hidden="true" tabindex="-1"></a>feed_forward <span class="ot">&lt;-</span> <span class="fu">nn_sequential</span>(</span>
+<span id="cb6-249"><a href="#cb6-249" aria-hidden="true" tabindex="-1"></a>      <span class="fu">nn_linear</span>(d_model, d_ff),</span>
+<span id="cb6-250"><a href="#cb6-250" aria-hidden="true" tabindex="-1"></a>      <span class="fu">nn_relu</span>(),</span>
+<span id="cb6-251"><a href="#cb6-251" aria-hidden="true" tabindex="-1"></a>      <span class="fu">nn_linear</span>(d_ff, d_model)</span>
+<span id="cb6-252"><a href="#cb6-252" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb6-253"><a href="#cb6-253" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-254"><a href="#cb6-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-255"><a href="#cb6-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-256"><a href="#cb6-256" aria-hidden="true" tabindex="-1"></a><span class="fu">## Các thành phần chính:</span></span>
+<span id="cb6-257"><a href="#cb6-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-258"><a href="#cb6-258" aria-hidden="true" tabindex="-1"></a>Sau khi hiểu rõ các thành phần cần thiết, ta sẽ ngó qua *workflow* đầy đủ của mô hình *Transformer*.Nếu bạn chưa hiểu thì có thể kham khảo link này <span class="co">[</span><span class="ot">datacamp</span><span class="co">](https://www.datacamp.com/tutorial/how-transformers-work)</span></span>
+<span id="cb6-259"><a href="#cb6-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-260"><a href="#cb6-260" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
+<span id="cb6-261"><a href="#cb6-261" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;div style="text-align: center; margin-bottom: 20px;"&gt;</span></span>
+<span id="cb6-262"><a href="#cb6-262" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;img src="img/workflow.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;"&gt;</span></span>
+<span id="cb6-263"><a href="#cb6-263" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb6-264"><a href="#cb6-264" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;!-- Picture Name --&gt;</span></span>
+<span id="cb6-265"><a href="#cb6-265" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div style="text-align: left; margin-top: 10px;"&gt;</span></span>
+<span id="cb6-266"><a href="#cb6-266" aria-hidden="true" tabindex="-1"></a><span class="in">    Hình 6: Workflow của mô hình Transformer</span></span>
+<span id="cb6-267"><a href="#cb6-267" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
+<span id="cb6-268"><a href="#cb6-268" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb6-269"><a href="#cb6-269" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;!-- Source Link --&gt;</span></span>
+<span id="cb6-270"><a href="#cb6-270" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div style="text-align: right; font-style: italic; margin-top: 5px;"&gt;</span></span>
+<span id="cb6-271"><a href="#cb6-271" aria-hidden="true" tabindex="-1"></a><span class="in">    Source: &lt;a href="https://arxiv.org/pdf/2204.11115"&gt;Link to Image&lt;/a&gt;</span></span>
+<span id="cb6-272"><a href="#cb6-272" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
+<span id="cb6-273"><a href="#cb6-273" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/div&gt;</span></span>
+<span id="cb6-274"><a href="#cb6-274" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-275"><a href="#cb6-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-276"><a href="#cb6-276" aria-hidden="true" tabindex="-1"></a>Mình sẽ trình bày theo cách cá nhân để giúp mọi người hiểu rõ hơn:</span>
+<span id="cb6-277"><a href="#cb6-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-278"><a href="#cb6-278" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Bước 1: Xử lí input**: sẽ gồm bước *Embedding* dữ liệu sau đó cộng thêm *Positional encoding*. Lưu ý: input cho *encoder* và *decoder* là khác nhau, *encoder* sẽ nhận đầu vào là các biến dự báo (ví dụ: giá trị lag của time series,...) và *decoder* sẽ nhận đầu vào là biến target (là kết quả bạn mong muốn mô hình dự báo đúng).</span>
+<span id="cb6-279"><a href="#cb6-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-280"><a href="#cb6-280" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Bước 2: Encoder output**: Khi dữ liệu đi vào *encoder block* thì sẽ trải qua *lớp *multi-head attention* và *feed forward* và các lớp sub-layer *normalization*. Lưu ý: khi normalizing thì phải normalize (kết quả từ lớp trước + input ban đầu), bạn có thể nhìn ảnh dưới đây để dễ hiểu hơn.</span>
+<span id="cb6-281"><a href="#cb6-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-282"><a href="#cb6-282" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
+<span id="cb6-283"><a href="#cb6-283" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;div style="text-align: center; margin-bottom: 20px;"&gt;</span></span>
+<span id="cb6-284"><a href="#cb6-284" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;img src="img/normalize.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;"&gt;</span></span>
+<span id="cb6-285"><a href="#cb6-285" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb6-286"><a href="#cb6-286" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;!-- Picture Name --&gt;</span></span>
+<span id="cb6-287"><a href="#cb6-287" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div style="text-align: left; margin-top: 10px;"&gt;</span></span>
+<span id="cb6-288"><a href="#cb6-288" aria-hidden="true" tabindex="-1"></a><span class="in">    Hình 7: Normalization và residual connection sau lớp Multi-Head Attention</span></span>
+<span id="cb6-289"><a href="#cb6-289" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
+<span id="cb6-290"><a href="#cb6-290" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb6-291"><a href="#cb6-291" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;!-- Source Link --&gt;</span></span>
+<span id="cb6-292"><a href="#cb6-292" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div style="text-align: right; font-style: italic; margin-top: 5px;"&gt;</span></span>
+<span id="cb6-293"><a href="#cb6-293" aria-hidden="true" tabindex="-1"></a><span class="in">    Source: &lt;a href="https://www.datacamp.com/tutorial/how-transformers-work?utm_adgroupid=157156376071&amp;utm_keyword=&amp;utm_matchtype=&amp;utm_network=g&amp;utm_adpostion=&amp;utm_targetid=aud-1685385913382:dsa-2218886984380&amp;utm_loc_interest_ms=&amp;utm_loc_physical_ms=9198559&amp;utm_content=&amp;gad_source=1"&gt;Link to Image&lt;/a&gt;</span></span>
+<span id="cb6-294"><a href="#cb6-294" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
+<span id="cb6-295"><a href="#cb6-295" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/div&gt;</span></span>
+<span id="cb6-296"><a href="#cb6-296" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-297"><a href="#cb6-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-298"><a href="#cb6-298" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Bước 3: Add encoder output to decoder**: Sau khi *Decoder* thực hiện tính toán cho dữ liệu thông qua layer *Mask multi-head attention* và *Normalization* thì sẽ đến bước *Cross-attention* (Mặc dù ở hình trên hoặc các tài liệu khác mà bạn từng đọc sẽ để là layer *multi-head attention* nhưng thực chất layer *cross-attention* mới đúng).</span>
+<span id="cb6-299"><a href="#cb6-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-300"><a href="#cb6-300" aria-hidden="true" tabindex="-1"></a>Vậy *cross-attention* có gì đặc biệt? Ta sẽ nhìn sơ qua cấu trúc của nó thì sẽ nhận ra điểm khác biệt so với *self-attention* thông thường là *cross-attention* sẽ nhận dữ liệu từ 2 nguồn: (i) output của encoder gán cho *Q* và (ii) input của decoder gán cho *V*, *K*.</span>
+<span id="cb6-301"><a href="#cb6-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-302"><a href="#cb6-302" aria-hidden="true" tabindex="-1"></a>::: {.panel-tabset}</span>
+<span id="cb6-303"><a href="#cb6-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-304"><a href="#cb6-304" aria-hidden="true" tabindex="-1"></a><span class="fu">## Cross attention:</span></span>
+<span id="cb6-305"><a href="#cb6-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-306"><a href="#cb6-306" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
+<span id="cb6-307"><a href="#cb6-307" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;div style="text-align: center; margin-bottom: 20px;"&gt;</span></span>
+<span id="cb6-308"><a href="#cb6-308" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;img src="img/cross_attention.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;"&gt;</span></span>
+<span id="cb6-309"><a href="#cb6-309" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb6-310"><a href="#cb6-310" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;!-- Picture Name --&gt;</span></span>
+<span id="cb6-311"><a href="#cb6-311" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div style="text-align: left; margin-top: 10px;"&gt;</span></span>
+<span id="cb6-312"><a href="#cb6-312" aria-hidden="true" tabindex="-1"></a><span class="in">    Hình 8: Workflow của Cross-attention</span></span>
+<span id="cb6-313"><a href="#cb6-313" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
+<span id="cb6-314"><a href="#cb6-314" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb6-315"><a href="#cb6-315" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;!-- Source Link --&gt;</span></span>
+<span id="cb6-316"><a href="#cb6-316" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div style="text-align: right; font-style: italic; margin-top: 5px;"&gt;</span></span>
+<span id="cb6-317"><a href="#cb6-317" aria-hidden="true" tabindex="-1"></a><span class="in">    Source: &lt;a href="https://magazine.sebastianraschka.com/p/understanding-and-coding-self-attention"&gt;Link to Image&lt;/a&gt;</span></span>
+<span id="cb6-318"><a href="#cb6-318" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
+<span id="cb6-319"><a href="#cb6-319" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/div&gt;</span></span>
+<span id="cb6-320"><a href="#cb6-320" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-321"><a href="#cb6-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-322"><a href="#cb6-322" aria-hidden="true" tabindex="-1"></a><span class="fu">## Self attention:</span></span>
+<span id="cb6-323"><a href="#cb6-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-324"><a href="#cb6-324" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
+<span id="cb6-325"><a href="#cb6-325" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;div style="text-align: center; margin-bottom: 20px;"&gt;</span></span>
+<span id="cb6-326"><a href="#cb6-326" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;img src="img/self_attention.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;"&gt;</span></span>
+<span id="cb6-327"><a href="#cb6-327" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb6-328"><a href="#cb6-328" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;!-- Picture Name --&gt;</span></span>
+<span id="cb6-329"><a href="#cb6-329" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div style="text-align: left; margin-top: 10px;"&gt;</span></span>
+<span id="cb6-330"><a href="#cb6-330" aria-hidden="true" tabindex="-1"></a><span class="in">    Hình 9: Workflow của Self-attention</span></span>
+<span id="cb6-331"><a href="#cb6-331" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
+<span id="cb6-332"><a href="#cb6-332" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb6-333"><a href="#cb6-333" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;!-- Source Link --&gt;</span></span>
+<span id="cb6-334"><a href="#cb6-334" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div style="text-align: right; font-style: italic; margin-top: 5px;"&gt;</span></span>
+<span id="cb6-335"><a href="#cb6-335" aria-hidden="true" tabindex="-1"></a><span class="in">    Source: &lt;a href="https://magazine.sebastianraschka.com/p/understanding-and-coding-self-attention"&gt;Link to Image&lt;/a&gt;</span></span>
+<span id="cb6-336"><a href="#cb6-336" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
+<span id="cb6-337"><a href="#cb6-337" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/div&gt;</span></span>
+<span id="cb6-338"><a href="#cb6-338" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-339"><a href="#cb6-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-340"><a href="#cb6-340" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-341"><a href="#cb6-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-342"><a href="#cb6-342" aria-hidden="true" tabindex="-1"></a>Về code trong R sẽ như sau:</span>
+<span id="cb6-343"><a href="#cb6-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-346"><a href="#cb6-346" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-347"><a href="#cb6-347" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Show structure"</span></span>
+<span id="cb6-348"><a href="#cb6-348" aria-hidden="true" tabindex="-1"></a>cross_attention <span class="ot">&lt;-</span> <span class="fu">nn_module</span>(</span>
+<span id="cb6-349"><a href="#cb6-349" aria-hidden="true" tabindex="-1"></a>  <span class="at">initialize =</span> <span class="cf">function</span>(embed_dim, num_heads) {</span>
+<span id="cb6-350"><a href="#cb6-350" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>embed_dim <span class="ot">&lt;-</span> embed_dim</span>
+<span id="cb6-351"><a href="#cb6-351" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>num_heads <span class="ot">&lt;-</span> num_heads</span>
+<span id="cb6-352"><a href="#cb6-352" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>head_dim <span class="ot">&lt;-</span> embed_dim <span class="sc">/</span> num_heads</span>
+<span id="cb6-353"><a href="#cb6-353" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-354"><a href="#cb6-354" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (self<span class="sc">$</span>head_dim <span class="sc">%%</span> <span class="dv">1</span> <span class="sc">!=</span> <span class="dv">0</span>) {</span>
+<span id="cb6-355"><a href="#cb6-355" aria-hidden="true" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">"embed_dim must be divisible by num_heads"</span>)</span>
+<span id="cb6-356"><a href="#cb6-356" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-357"><a href="#cb6-357" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-358"><a href="#cb6-358" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>query <span class="ot">&lt;-</span> <span class="fu">nn_linear</span>(embed_dim, embed_dim, <span class="at">bias =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-359"><a href="#cb6-359" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>key <span class="ot">&lt;-</span> <span class="fu">nn_linear</span>(embed_dim, embed_dim, <span class="at">bias =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-360"><a href="#cb6-360" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>value <span class="ot">&lt;-</span> <span class="fu">nn_linear</span>(embed_dim, embed_dim, <span class="at">bias =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-361"><a href="#cb6-361" aria-hidden="true" tabindex="-1"></a>    self<span class="sc">$</span>out <span class="ot">&lt;-</span> <span class="fu">nn_linear</span>(embed_dim, embed_dim, <span class="at">bias =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-362"><a href="#cb6-362" aria-hidden="true" tabindex="-1"></a>  },</span>
+<span id="cb6-363"><a href="#cb6-363" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-364"><a href="#cb6-364" aria-hidden="true" tabindex="-1"></a>  <span class="at">forward =</span> <span class="cf">function</span>(decoder_input, encoder_output, <span class="at">mask =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb6-365"><a href="#cb6-365" aria-hidden="true" tabindex="-1"></a>    batch_size <span class="ot">&lt;-</span> decoder_input<span class="sc">$</span><span class="fu">size</span>(<span class="dv">1</span>)</span>
+<span id="cb6-366"><a href="#cb6-366" aria-hidden="true" tabindex="-1"></a>    seq_leng_dec <span class="ot">&lt;-</span> decoder_input<span class="sc">$</span><span class="fu">size</span>(<span class="dv">2</span>)</span>
+<span id="cb6-367"><a href="#cb6-367" aria-hidden="true" tabindex="-1"></a>    seq_leng_enc <span class="ot">&lt;-</span> encoder_output<span class="sc">$</span><span class="fu">size</span>(<span class="dv">2</span>)</span>
+<span id="cb6-368"><a href="#cb6-368" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-369"><a href="#cb6-369" aria-hidden="true" tabindex="-1"></a>    Q <span class="ot">&lt;-</span> self<span class="sc">$</span><span class="fu">query</span>(decoder_input)</span>
+<span id="cb6-370"><a href="#cb6-370" aria-hidden="true" tabindex="-1"></a>    K <span class="ot">&lt;-</span> self<span class="sc">$</span><span class="fu">key</span>(encoder_output)</span>
+<span id="cb6-371"><a href="#cb6-371" aria-hidden="true" tabindex="-1"></a>    V <span class="ot">&lt;-</span> self<span class="sc">$</span><span class="fu">value</span>(encoder_output)</span>
+<span id="cb6-372"><a href="#cb6-372" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-373"><a href="#cb6-373" aria-hidden="true" tabindex="-1"></a>    Q <span class="ot">&lt;-</span> Q<span class="sc">$</span><span class="fu">view</span>(<span class="fu">c</span>(batch_size, seq_leng_dec, self<span class="sc">$</span>num_heads, self<span class="sc">$</span>head_dim))<span class="sc">$</span><span class="fu">transpose</span>(<span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb6-374"><a href="#cb6-374" aria-hidden="true" tabindex="-1"></a>    K <span class="ot">&lt;-</span> K<span class="sc">$</span><span class="fu">view</span>(<span class="fu">c</span>(batch_size, seq_leng_enc, self<span class="sc">$</span>num_heads, self<span class="sc">$</span>head_dim))<span class="sc">$</span><span class="fu">transpose</span>(<span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb6-375"><a href="#cb6-375" aria-hidden="true" tabindex="-1"></a>    V <span class="ot">&lt;-</span> V<span class="sc">$</span><span class="fu">view</span>(<span class="fu">c</span>(batch_size, seq_leng_enc, self<span class="sc">$</span>num_heads, self<span class="sc">$</span>head_dim))<span class="sc">$</span><span class="fu">transpose</span>(<span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb6-376"><a href="#cb6-376" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-377"><a href="#cb6-377" aria-hidden="true" tabindex="-1"></a>    d_k <span class="ot">&lt;-</span> self<span class="sc">$</span>head_dim</span>
+<span id="cb6-378"><a href="#cb6-378" aria-hidden="true" tabindex="-1"></a>    attention_scores <span class="ot">&lt;-</span> <span class="fu">torch_matmul</span>(Q, <span class="fu">torch_transpose</span>(K, <span class="sc">-</span><span class="dv">1</span>, <span class="sc">-</span><span class="dv">2</span>)) <span class="sc">/</span> <span class="fu">sqrt</span>(d_k)</span>
+<span id="cb6-379"><a href="#cb6-379" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-380"><a href="#cb6-380" aria-hidden="true" tabindex="-1"></a>    weights <span class="ot">&lt;-</span> <span class="fu">nnf_softmax</span>(attention_scores, <span class="at">dim =</span> <span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb6-381"><a href="#cb6-381" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-382"><a href="#cb6-382" aria-hidden="true" tabindex="-1"></a>    attn_output <span class="ot">&lt;-</span> <span class="fu">torch_matmul</span>(weights, V)</span>
+<span id="cb6-383"><a href="#cb6-383" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-384"><a href="#cb6-384" aria-hidden="true" tabindex="-1"></a>    attn_output <span class="ot">&lt;-</span> attn_output<span class="sc">$</span><span class="fu">transpose</span>(<span class="dv">2</span>, <span class="dv">3</span>)<span class="sc">$</span><span class="fu">contiguous</span>()<span class="sc">$</span><span class="fu">view</span>(<span class="fu">c</span>(batch_size, seq_leng_dec, self<span class="sc">$</span>embed_dim))</span>
+<span id="cb6-385"><a href="#cb6-385" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-386"><a href="#cb6-386" aria-hidden="true" tabindex="-1"></a>    output <span class="ot">&lt;-</span> self<span class="sc">$</span><span class="fu">out</span>(attn_output)</span>
+<span id="cb6-387"><a href="#cb6-387" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(output)</span>
+<span id="cb6-388"><a href="#cb6-388" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-389"><a href="#cb6-389" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-390"><a href="#cb6-390" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-391"><a href="#cb6-391" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-392"><a href="#cb6-392" aria-hidden="true" tabindex="-1"></a>Kết quả sau đó sẽ được đẩy qua layer *feed forward* và *normalization* để trả về output (giống như *encoder*).</span>
+<span id="cb6-393"><a href="#cb6-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-394"><a href="#cb6-394" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Bước 4: Output of decoder**: Cuối cùng, output của *decoder* sẽ qua 2 layer *linear* và *softmax* để tìm ra output có xác suất cao nhất (nghĩa là output đó sẽ có ý nghĩa nhất trong *sequence* để dự báo cho các step sau).</span>
+<span id="cb6-395"><a href="#cb6-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-396"><a href="#cb6-396" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
+<span id="cb6-397"><a href="#cb6-397" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;div style="text-align: center; margin-bottom: 20px;"&gt;</span></span>
+<span id="cb6-398"><a href="#cb6-398" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;img src="img/output.png" style="max-width: 40%; height: auto; display: block; margin: 0 auto;"&gt;</span></span>
+<span id="cb6-399"><a href="#cb6-399" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb6-400"><a href="#cb6-400" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;!-- Picture Name --&gt;</span></span>
+<span id="cb6-401"><a href="#cb6-401" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div style="text-align: left; margin-top: 10px;"&gt;</span></span>
+<span id="cb6-402"><a href="#cb6-402" aria-hidden="true" tabindex="-1"></a><span class="in">    Hình 10: Output của mô hình</span></span>
+<span id="cb6-403"><a href="#cb6-403" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
+<span id="cb6-404"><a href="#cb6-404" aria-hidden="true" tabindex="-1"></a><span class="in">  </span></span>
+<span id="cb6-405"><a href="#cb6-405" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;!-- Source Link --&gt;</span></span>
+<span id="cb6-406"><a href="#cb6-406" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;div style="text-align: right; font-style: italic; margin-top: 5px;"&gt;</span></span>
+<span id="cb6-407"><a href="#cb6-407" aria-hidden="true" tabindex="-1"></a><span class="in">    Source: &lt;a href="https://www.datacamp.com/tutorial/how-transformers-work"&gt;Link to Image&lt;/a&gt;</span></span>
+<span id="cb6-408"><a href="#cb6-408" aria-hidden="true" tabindex="-1"></a><span class="in">  &lt;/div&gt;</span></span>
+<span id="cb6-409"><a href="#cb6-409" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/div&gt;</span></span>
+<span id="cb6-410"><a href="#cb6-410" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-411"><a href="#cb6-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-412"><a href="#cb6-412" aria-hidden="true" tabindex="-1"></a>Như vậy, chúng ta đã lướt sơ qua cách hoạt động và các lưu ý của mô hình *Transformer*. Tiếp theo, mình sẽ thử xây dựng trong **R** và dùng nó để xử lí task dự báo chuỗi thời gian.</span>
+<span id="cb6-413"><a href="#cb6-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-414"><a href="#cb6-414" aria-hidden="true" tabindex="-1"></a><span class="in">```{=html}</span></span>
+<span id="cb6-415"><a href="#cb6-415" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;!DOCTYPE html&gt;</span></span>
+<span id="cb6-416"><a href="#cb6-416" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;html lang="en"&gt;</span></span>
+<span id="cb6-417"><a href="#cb6-417" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;head&gt;</span></span>
+<span id="cb6-418"><a href="#cb6-418" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;meta charset="UTF-8"&gt;</span></span>
+<span id="cb6-419"><a href="#cb6-419" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></span>
+<span id="cb6-420"><a href="#cb6-420" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;title&gt;Go to Next Page&lt;/title&gt;</span></span>
+<span id="cb6-421"><a href="#cb6-421" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;style&gt;</span></span>
+<span id="cb6-422"><a href="#cb6-422" aria-hidden="true" tabindex="-1"></a><span class="in">        /* Global Styles */</span></span>
+<span id="cb6-423"><a href="#cb6-423" aria-hidden="true" tabindex="-1"></a><span class="in">        body {</span></span>
+<span id="cb6-424"><a href="#cb6-424" aria-hidden="true" tabindex="-1"></a><span class="in">            font-family: 'Tahoma', sans-serif;</span></span>
+<span id="cb6-425"><a href="#cb6-425" aria-hidden="true" tabindex="-1"></a><span class="in">            display: flex;</span></span>
+<span id="cb6-426"><a href="#cb6-426" aria-hidden="true" tabindex="-1"></a><span class="in">            flex-direction: column;  /* Stack content and footnote vertically */</span></span>
+<span id="cb6-427"><a href="#cb6-427" aria-hidden="true" tabindex="-1"></a><span class="in">            justify-content: center;  /* Center content vertically */</span></span>
+<span id="cb6-428"><a href="#cb6-428" aria-hidden="true" tabindex="-1"></a><span class="in">            align-items: center;      /* Center content horizontally */</span></span>
+<span id="cb6-429"><a href="#cb6-429" aria-hidden="true" tabindex="-1"></a><span class="in">            margin: 0;</span></span>
+<span id="cb6-430"><a href="#cb6-430" aria-hidden="true" tabindex="-1"></a><span class="in">            background-color: $secondary-color;</span></span>
+<span id="cb6-431"><a href="#cb6-431" aria-hidden="true" tabindex="-1"></a><span class="in">            box-sizing: border-box;</span></span>
+<span id="cb6-432"><a href="#cb6-432" aria-hidden="true" tabindex="-1"></a><span class="in">            min-height: 80vh; /* Adjusted to 80vh to ensure it's not too high */</span></span>
+<span id="cb6-433"><a href="#cb6-433" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
+<span id="cb6-434"><a href="#cb6-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-435"><a href="#cb6-435" aria-hidden="true" tabindex="-1"></a><span class="in">        /* Container Styling (Main Content) */</span></span>
+<span id="cb6-436"><a href="#cb6-436" aria-hidden="true" tabindex="-1"></a><span class="in">        .container {</span></span>
+<span id="cb6-437"><a href="#cb6-437" aria-hidden="true" tabindex="-1"></a><span class="in">            text-align: center;</span></span>
+<span id="cb6-438"><a href="#cb6-438" aria-hidden="true" tabindex="-1"></a><span class="in">            padding: 20px 40px; /* Adjust padding for more compactness */</span></span>
+<span id="cb6-439"><a href="#cb6-439" aria-hidden="true" tabindex="-1"></a><span class="in">            background-color: white;</span></span>
+<span id="cb6-440"><a href="#cb6-440" aria-hidden="true" tabindex="-1"></a><span class="in">            border-radius: 12px;</span></span>
+<span id="cb6-441"><a href="#cb6-441" aria-hidden="true" tabindex="-1"></a><span class="in">            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);</span></span>
+<span id="cb6-442"><a href="#cb6-442" aria-hidden="true" tabindex="-1"></a><span class="in">            width: auto;  /* Auto width to fit content */</span></span>
+<span id="cb6-443"><a href="#cb6-443" aria-hidden="true" tabindex="-1"></a><span class="in">            max-width: 380px;  /* Adjusted max-width for a smaller container */</span></span>
+<span id="cb6-444"><a href="#cb6-444" aria-hidden="true" tabindex="-1"></a><span class="in">            box-sizing: border-box;</span></span>
+<span id="cb6-445"><a href="#cb6-445" aria-hidden="true" tabindex="-1"></a><span class="in">            display: flex;</span></span>
+<span id="cb6-446"><a href="#cb6-446" aria-hidden="true" tabindex="-1"></a><span class="in">            justify-content: center;</span></span>
+<span id="cb6-447"><a href="#cb6-447" aria-hidden="true" tabindex="-1"></a><span class="in">            align-items: center;</span></span>
+<span id="cb6-448"><a href="#cb6-448" aria-hidden="true" tabindex="-1"></a><span class="in">            flex-direction: column;</span></span>
+<span id="cb6-449"><a href="#cb6-449" aria-hidden="true" tabindex="-1"></a><span class="in">            margin-top: 20px;  /* Space from the top of the page */</span></span>
+<span id="cb6-450"><a href="#cb6-450" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
+<span id="cb6-451"><a href="#cb6-451" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-452"><a href="#cb6-452" aria-hidden="true" tabindex="-1"></a><span class="in">        /* Link Styling */</span></span>
+<span id="cb6-453"><a href="#cb6-453" aria-hidden="true" tabindex="-1"></a><span class="in">        .link {</span></span>
+<span id="cb6-454"><a href="#cb6-454" aria-hidden="true" tabindex="-1"></a><span class="in">            font-size: 20px;  /* Adjusted font size for readability */</span></span>
+<span id="cb6-455"><a href="#cb6-455" aria-hidden="true" tabindex="-1"></a><span class="in">            color: #007bff;</span></span>
+<span id="cb6-456"><a href="#cb6-456" aria-hidden="true" tabindex="-1"></a><span class="in">            text-decoration: none;</span></span>
+<span id="cb6-457"><a href="#cb6-457" aria-hidden="true" tabindex="-1"></a><span class="in">            font-weight: 700;</span></span>
+<span id="cb6-458"><a href="#cb6-458" aria-hidden="true" tabindex="-1"></a><span class="in">            display: inline-flex;</span></span>
+<span id="cb6-459"><a href="#cb6-459" aria-hidden="true" tabindex="-1"></a><span class="in">            align-items: center;</span></span>
+<span id="cb6-460"><a href="#cb6-460" aria-hidden="true" tabindex="-1"></a><span class="in">            cursor: pointer;</span></span>
+<span id="cb6-461"><a href="#cb6-461" aria-hidden="true" tabindex="-1"></a><span class="in">            padding: 12px 30px;</span></span>
+<span id="cb6-462"><a href="#cb6-462" aria-hidden="true" tabindex="-1"></a><span class="in">            border-radius: 6px;</span></span>
+<span id="cb6-463"><a href="#cb6-463" aria-hidden="true" tabindex="-1"></a><span class="in">            transition: all 0.3s ease;</span></span>
+<span id="cb6-464"><a href="#cb6-464" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
+<span id="cb6-465"><a href="#cb6-465" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-466"><a href="#cb6-466" aria-hidden="true" tabindex="-1"></a><span class="in">        .link:hover {</span></span>
+<span id="cb6-467"><a href="#cb6-467" aria-hidden="true" tabindex="-1"></a><span class="in">            color: #0056b3;</span></span>
+<span id="cb6-468"><a href="#cb6-468" aria-hidden="true" tabindex="-1"></a><span class="in">            text-decoration: none;</span></span>
+<span id="cb6-469"><a href="#cb6-469" aria-hidden="true" tabindex="-1"></a><span class="in">            background-color: #e6f0ff;</span></span>
+<span id="cb6-470"><a href="#cb6-470" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
+<span id="cb6-471"><a href="#cb6-471" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-472"><a href="#cb6-472" aria-hidden="true" tabindex="-1"></a><span class="in">        /* Arrow Styling */</span></span>
+<span id="cb6-473"><a href="#cb6-473" aria-hidden="true" tabindex="-1"></a><span class="in">        .arrow {</span></span>
+<span id="cb6-474"><a href="#cb6-474" aria-hidden="true" tabindex="-1"></a><span class="in">            margin-left: 12px;</span></span>
+<span id="cb6-475"><a href="#cb6-475" aria-hidden="true" tabindex="-1"></a><span class="in">            font-size: 24px;</span></span>
+<span id="cb6-476"><a href="#cb6-476" aria-hidden="true" tabindex="-1"></a><span class="in">            transition: transform 0.3s ease, font-size 0.3s ease;</span></span>
+<span id="cb6-477"><a href="#cb6-477" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
+<span id="cb6-478"><a href="#cb6-478" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-479"><a href="#cb6-479" aria-hidden="true" tabindex="-1"></a><span class="in">        .link:hover .arrow {</span></span>
+<span id="cb6-480"><a href="#cb6-480" aria-hidden="true" tabindex="-1"></a><span class="in">            transform: translateX(8px);</span></span>
+<span id="cb6-481"><a href="#cb6-481" aria-hidden="true" tabindex="-1"></a><span class="in">            font-size: 26px;</span></span>
+<span id="cb6-482"><a href="#cb6-482" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
+<span id="cb6-483"><a href="#cb6-483" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-484"><a href="#cb6-484" aria-hidden="true" tabindex="-1"></a><span class="in">        /* Focus State for Accessibility */</span></span>
+<span id="cb6-485"><a href="#cb6-485" aria-hidden="true" tabindex="-1"></a><span class="in">        .link:focus {</span></span>
+<span id="cb6-486"><a href="#cb6-486" aria-hidden="true" tabindex="-1"></a><span class="in">            outline: 2px solid #0056b3;</span></span>
+<span id="cb6-487"><a href="#cb6-487" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
+<span id="cb6-488"><a href="#cb6-488" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-489"><a href="#cb6-489" aria-hidden="true" tabindex="-1"></a><span class="in">        /* Footer Styling (Footnote) */</span></span>
+<span id="cb6-490"><a href="#cb6-490" aria-hidden="true" tabindex="-1"></a><span class="in">        .footer {</span></span>
+<span id="cb6-491"><a href="#cb6-491" aria-hidden="true" tabindex="-1"></a><span class="in">            font-size: 14px;</span></span>
+<span id="cb6-492"><a href="#cb6-492" aria-hidden="true" tabindex="-1"></a><span class="in">            color: #777;</span></span>
+<span id="cb6-493"><a href="#cb6-493" aria-hidden="true" tabindex="-1"></a><span class="in">            margin-top: 20px;  /* Space between content and footnote */</span></span>
+<span id="cb6-494"><a href="#cb6-494" aria-hidden="true" tabindex="-1"></a><span class="in">            text-align: center;</span></span>
+<span id="cb6-495"><a href="#cb6-495" aria-hidden="true" tabindex="-1"></a><span class="in">            width: 100%;</span></span>
+<span id="cb6-496"><a href="#cb6-496" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
+<span id="cb6-497"><a href="#cb6-497" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-498"><a href="#cb6-498" aria-hidden="true" tabindex="-1"></a><span class="in">        /* Mobile-Friendly Adjustments */</span></span>
+<span id="cb6-499"><a href="#cb6-499" aria-hidden="true" tabindex="-1"></a><span class="in">        @media (max-width: 600px) {</span></span>
+<span id="cb6-500"><a href="#cb6-500" aria-hidden="true" tabindex="-1"></a><span class="in">            .link {</span></span>
+<span id="cb6-501"><a href="#cb6-501" aria-hidden="true" tabindex="-1"></a><span class="in">                font-size: 18px;</span></span>
+<span id="cb6-502"><a href="#cb6-502" aria-hidden="true" tabindex="-1"></a><span class="in">                padding: 8px 15px;  /* Smaller padding for mobile devices */</span></span>
+<span id="cb6-503"><a href="#cb6-503" aria-hidden="true" tabindex="-1"></a><span class="in">            }</span></span>
+<span id="cb6-504"><a href="#cb6-504" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-505"><a href="#cb6-505" aria-hidden="true" tabindex="-1"></a><span class="in">            .arrow {</span></span>
+<span id="cb6-506"><a href="#cb6-506" aria-hidden="true" tabindex="-1"></a><span class="in">                font-size: 18px;</span></span>
+<span id="cb6-507"><a href="#cb6-507" aria-hidden="true" tabindex="-1"></a><span class="in">                margin-left: 8px;</span></span>
+<span id="cb6-508"><a href="#cb6-508" aria-hidden="true" tabindex="-1"></a><span class="in">            }</span></span>
+<span id="cb6-509"><a href="#cb6-509" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-510"><a href="#cb6-510" aria-hidden="true" tabindex="-1"></a><span class="in">            .container {</span></span>
+<span id="cb6-511"><a href="#cb6-511" aria-hidden="true" tabindex="-1"></a><span class="in">                padding: 15px 30px;  /* Smaller padding on mobile */</span></span>
+<span id="cb6-512"><a href="#cb6-512" aria-hidden="true" tabindex="-1"></a><span class="in">                max-width: 90%;  /* Ensure container fits better on small screens */</span></span>
+<span id="cb6-513"><a href="#cb6-513" aria-hidden="true" tabindex="-1"></a><span class="in">            }</span></span>
+<span id="cb6-514"><a href="#cb6-514" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
+<span id="cb6-515"><a href="#cb6-515" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;/style&gt;</span></span>
+<span id="cb6-516"><a href="#cb6-516" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/head&gt;</span></span>
+<span id="cb6-517"><a href="#cb6-517" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;body&gt;</span></span>
+<span id="cb6-518"><a href="#cb6-518" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;div class="container"&gt;</span></span>
+<span id="cb6-519"><a href="#cb6-519" aria-hidden="true" tabindex="-1"></a><span class="in">        &lt;a href="https://loccx78vn.github.io/Transformer_model/practice.html" class="link" tabindex="0"&gt;</span></span>
+<span id="cb6-520"><a href="#cb6-520" aria-hidden="true" tabindex="-1"></a><span class="in">            Go to Next Page</span></span>
+<span id="cb6-521"><a href="#cb6-521" aria-hidden="true" tabindex="-1"></a><span class="in">            &lt;span class="arrow"&gt;➔&lt;/span&gt;</span></span>
+<span id="cb6-522"><a href="#cb6-522" aria-hidden="true" tabindex="-1"></a><span class="in">        &lt;/a&gt;</span></span>
+<span id="cb6-523"><a href="#cb6-523" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;/div&gt;</span></span>
+<span id="cb6-524"><a href="#cb6-524" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/body&gt;</span></span>
+<span id="cb6-525"><a href="#cb6-525" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/html&gt;</span></span>
+<span id="cb6-526"><a href="#cb6-526" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>© Copyright 2024, Loc cao</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Built with <a href="https://quarto.org/">Quarto</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

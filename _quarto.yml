@@ -3,12 +3,13 @@ project:
   output-dir: docs
   
 website:
-  title: "Time series model 2"
+  title: "Transformer model"
   navbar:
     left:
       - href: index.qmd
         text: Home
-      - href: torch.qmd
+      - href: transfer.qmd
+      - href: practice.qmd
   page-footer:
     right: "Built with [Quarto](https://quarto.org/)"
     left: "&copy; Copyright 2024, Loc cao"

@@ -23,6 +23,15 @@ body {
   background-color: black;
 }
 
+/* Scrollable container for both horizontal and vertical scroll */
+.scrollable-container {
+  width: 100%;            /* Adjust width based on content */
+  max-width: 100%;        /* Ensure the container does not stretch too wide */
+  height: 300px;          /* Set the desired height */
+  overflow: auto;         /* Enable both horizontal and vertical scrolling */
+  border: 1px solid #ccc; /* Optional border for visibility */
+}
+
 /* Footnote styles */
 .footnote {
   font-size: 0.9rem;
@@ -120,7 +129,7 @@ body {
 
 /*-- scss:defaults --*/
 // Base document colors
-$body-bg: white;
+$body-bg: black;
 $link-color: #2ba2f9;
 
 /*-- Define Bootstrap color variable--*/
@@ -176,3 +185,5 @@ pre, code {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   font-family: "Courier New", monospace;
 }
+
+
