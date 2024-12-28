@@ -258,13 +258,9 @@ window.Quarto = {
     <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
-  <li class="nav-item compact">
-    <a class="nav-link" href="./transfer.qmd"> 
-<span class="menu-text"></span></a>
-  </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./practice.html"> 
-<span class="menu-text">Time series forecasting</span></a>
+    <a class="nav-link active" href="./torch.html" aria-current="page"> 
+<span class="menu-text">RNN and LSTM model</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -676,7 +672,7 @@ MSE = \frac{1}{n} \sum_{i=1}^{n} (y_{\text{pred}}(i) - y_{\text{true}}(i))^2
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">predict</span>(x_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>1/1 - 0s - 454ms/step</code></pre>
+<pre><code>1/1 - 0s - 291ms/step</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
@@ -723,7 +719,7 @@ MSE = \frac{1}{n} \sum_{i=1}^{n} (y_{\text{pred}}(i) - y_{\text{true}}(i))^2
 </details>
 <div class="cell-output-display">
 <div class="highchart html-widget html-fill-item" id="htmlwidget-10e113bfb0d94b57d7e5" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-10e113bfb0d94b57d7e5">{"x":{"hc_opts":{"chart":{"reflow":true},"title":{"text":"Time Series Forecasting with Highcharts"},"yAxis":{"title":{"text":"Value"},"plotLines":[{"value":0,"width":1,"color":"gray"}]},"credits":{"enabled":false},"exporting":{"enabled":false},"boost":{"enabled":false},"plotOptions":{"series":{"label":{"enabled":false},"turboThreshold":0},"treemap":{"layoutAlgorithm":"squarified"}},"xAxis":{"categories":null,"title":{"text":"Time"}},"series":[{"data":[-1.107158472156665,1.081538276106759,-1.55612190769788,-1.331640189927273,-0.9387971838287095,0.1836114050243284,0.5764544111228918,0.5203339816802398,1.081538276106759,0.01525011669637273,-0.2092316010742349,-0.4337133188448424,0.5764544111228918,-0.8826767543860576,0.7448156994508474,1.586622141090626,-1.500001478255228,0.5764544111228918,0.2397318344669803,0.6325748405655436,-0.09699074218893107,0.07137054613902463,1.69886299997593,-0.04087031274627917,-1.500001478255228,-0.6020746071727981,0.1836114050243284],"name":"Actual Data","type":"line","color":"#1f77b4"},{"data":[0.04461503401398659,0.2692233920097351,-0.006288964301347733,-0.3756470680236816,0.1637663245201111,0.1068451255559921,-0.8002327084541321,-0.3810099065303802,1.409126162528992,-0.05330170318484306,-0.972364604473114,0.1550320684909821,0.9614682793617249,-0.9884955286979675,-0.8839547634124756,0.836478054523468,-0.2743905186653137,0.1881692409515381,-0.1454831212759018,0.2456993460655212,-0.1999506801366806,-0.7886577248573303,1.871401071548462,0.04627852514386177,-0.9508610367774963,0.1264337748289108,0.8784328699111938],"name":"Forecast","type":"line","color":"#ff7f0e"}],"tooltip":{"shared":true,"crosshairs":true},"legend":{"enabled":true}},"theme":{"chart":{"backgroundColor":"transparent"},"colors":["#7cb5ec","#434348","#90ed7d","#f7a35c","#8085e9","#f15c80","#e4d354","#2b908f","#f45b5b","#91e8e1"]},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadCSV":"Download CSV","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","downloadXLS":"Download XLS","drillUpText":"◁ Back to {series.name}","exitFullscreen":"Exit from full screen","exportData":{"annotationHeader":"Annotations","categoryDatetimeHeader":"DateTime","categoryHeader":"Category"},"hideData":"Hide data table","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbolMagnitude":1000,"numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"shortWeekdays":["Sat","Sun","Mon","Tue","Wed","Thu","Fri"],"thousandsSep":" ","viewData":"View data table","viewFullscreen":"View in full screen","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":[],"debug":false},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-10e113bfb0d94b57d7e5">{"x":{"hc_opts":{"chart":{"reflow":true},"title":{"text":"Time Series Forecasting with Highcharts"},"yAxis":{"title":{"text":"Value"},"plotLines":[{"value":0,"width":1,"color":"gray"}]},"credits":{"enabled":false},"exporting":{"enabled":false},"boost":{"enabled":false},"plotOptions":{"series":{"label":{"enabled":false},"turboThreshold":0},"treemap":{"layoutAlgorithm":"squarified"}},"xAxis":{"categories":null,"title":{"text":"Time"}},"series":[{"data":[-1.107158472156665,1.081538276106759,-1.55612190769788,-1.331640189927273,-0.9387971838287095,0.1836114050243284,0.5764544111228918,0.5203339816802398,1.081538276106759,0.01525011669637273,-0.2092316010742349,-0.4337133188448424,0.5764544111228918,-0.8826767543860576,0.7448156994508474,1.586622141090626,-1.500001478255228,0.5764544111228918,0.2397318344669803,0.6325748405655436,-0.09699074218893107,0.07137054613902463,1.69886299997593,-0.04087031274627917,-1.500001478255228,-0.6020746071727981,0.1836114050243284],"name":"Actual Data","type":"line","color":"#1f77b4"},{"data":[-1.022425293922424,0.3914834260940552,-0.08878233283758163,-0.4297412633895874,-0.7906455397605896,0.8915704488754272,-0.03768590465188026,-0.2452405542135239,0.7043265104293823,-0.1982268244028091,0.2637301087379456,0.3002156019210815,0.8148130178451538,-0.6196038126945496,-0.5604920387268066,1.213022589683533,0.3149556815624237,0.5021977424621582,-0.1638188362121582,0.8064267039299011,-1.013578653335571,-1.076299786567688,1.529731631278992,-0.09864344447851181,-0.4573916494846344,0.6192638278007507,1.012003660202026],"name":"Forecast","type":"line","color":"#ff7f0e"}],"tooltip":{"shared":true,"crosshairs":true},"legend":{"enabled":true}},"theme":{"chart":{"backgroundColor":"transparent"},"colors":["#7cb5ec","#434348","#90ed7d","#f7a35c","#8085e9","#f15c80","#e4d354","#2b908f","#f45b5b","#91e8e1"]},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadCSV":"Download CSV","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","downloadXLS":"Download XLS","drillUpText":"◁ Back to {series.name}","exitFullscreen":"Exit from full screen","exportData":{"annotationHeader":"Annotations","categoryDatetimeHeader":"DateTime","categoryHeader":"Category"},"hideData":"Hide data table","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbolMagnitude":1000,"numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"shortWeekdays":["Sat","Sun","Mon","Tue","Wed","Thu","Fri"],"thousandsSep":" ","viewData":"View data table","viewFullscreen":"View in full screen","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":[],"debug":false},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -1237,13 +1233,13 @@ MSE = \frac{1}{n} \sum_{i=1}^{n} (y_{\text{pred}}(i) - y_{\text{true}}(i))^2
 <tbody class="gt_table_body">
 <tr class="odd">
 <td class="gt_row gt_left" headers="Model">RNN</td>
-<td class="gt_row gt_right" headers="MSE">0.655601</td>
-<td class="gt_row gt_right" headers="MAE">0.790752</td>
+<td class="gt_row gt_right" headers="MSE">0.622324</td>
+<td class="gt_row gt_right" headers="MAE">0.790441</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="Model">LSTM</td>
-<td class="gt_row gt_right" headers="MSE">0.671340</td>
-<td class="gt_row gt_right" headers="MAE">0.736131</td>
+<td class="gt_row gt_right" headers="MSE">0.637329</td>
+<td class="gt_row gt_right" headers="MAE">0.735569</td>
 </tr>
 </tbody>
 </table>
@@ -1259,7 +1255,7 @@ MSE = \frac{1}{n} \sum_{i=1}^{n} (y_{\text{pred}}(i) - y_{\text{true}}(i))^2
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">predict</span>(x_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>1/1 - 0s - 338ms/step</code></pre>
+<pre><code>1/1 - 0s - 350ms/step</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
@@ -1300,7 +1296,7 @@ MSE = \frac{1}{n} \sum_{i=1}^{n} (y_{\text{pred}}(i) - y_{\text{true}}(i))^2
 </details>
 <div class="cell-output-display">
 <div class="highchart html-widget html-fill-item" id="htmlwidget-9dd5ddb2c96fa0698618" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-9dd5ddb2c96fa0698618">{"x":{"hc_opts":{"chart":{"reflow":true,"type":"line"},"title":{"text":"Residual Comparison: LSTM vs RNN"},"yAxis":{"title":{"text":"Residuals"},"labels":{"formatter":"function() { return (this.value).toFixed(0) + '%'; }"},"plotLines":[{"value":0,"color":"gray","width":1,"dashStyle":"Dash"}]},"credits":{"enabled":false},"exporting":{"enabled":false},"boost":{"enabled":false},"plotOptions":{"series":{"label":{"enabled":false},"turboThreshold":0},"treemap":{"layoutAlgorithm":"squarified"}},"xAxis":{"categories":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27],"title":{"text":"Date"}},"series":[{"data":[-1.075,-0.922,-0.982,-0.909,-0.8169999999999999,-1.821,-1.183,-1.118,-1.012,-2.645,-0.767,-0.837,-1.098,-0.907,-1.031,-0.982,-0.979,-0.981,-0.83,-0.872,-2.014,0.984,-0.872,-5.652,-1.078,-1.151,-0.502],"name":"LSTM Residuals","color":"#1f77b4"},{"data":[-1.04,-0.751,-0.996,-0.718,-1.174,-0.418,-2.388,-1.732,0.303,-4.495,3.647,-1.357,0.668,0.12,-2.187,-0.473,-0.8169999999999999,-0.674,-1.607,-0.612,1.062,-12.05,0.102,-2.132,-0.366,-1.21,3.784],"name":"RNN Residuals","color":"#ff7f0e"}],"tooltip":{"shared":true},"legend":{"enabled":true}},"theme":{"chart":{"backgroundColor":"transparent"},"colors":["#7cb5ec","#434348","#90ed7d","#f7a35c","#8085e9","#f15c80","#e4d354","#2b908f","#f45b5b","#91e8e1"]},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadCSV":"Download CSV","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","downloadXLS":"Download XLS","drillUpText":"◁ Back to {series.name}","exitFullscreen":"Exit from full screen","exportData":{"annotationHeader":"Annotations","categoryDatetimeHeader":"DateTime","categoryHeader":"Category"},"hideData":"Hide data table","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbolMagnitude":1000,"numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"shortWeekdays":["Sat","Sun","Mon","Tue","Wed","Thu","Fri"],"thousandsSep":" ","viewData":"View data table","viewFullscreen":"View in full screen","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":[],"debug":false},"evals":["hc_opts.yAxis.labels.formatter"],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-9dd5ddb2c96fa0698618">{"x":{"hc_opts":{"chart":{"reflow":true,"type":"line"},"title":{"text":"Residual Comparison: LSTM vs RNN"},"yAxis":{"title":{"text":"Residuals"},"labels":{"formatter":"function() { return (this.value).toFixed(0) + '%'; }"},"plotLines":[{"value":0,"color":"gray","width":1,"dashStyle":"Dash"}]},"credits":{"enabled":false},"exporting":{"enabled":false},"boost":{"enabled":false},"plotOptions":{"series":{"label":{"enabled":false},"turboThreshold":0},"treemap":{"layoutAlgorithm":"squarified"}},"xAxis":{"categories":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27],"title":{"text":"Date"}},"series":[{"data":[-1.009,-0.998,-0.944,-0.885,-0.8070000000000001,-1.86,-1.209,-1.165,-1.047,-4.768,-0.665,-0.8169999999999999,-1.109,-0.919,-1.034,-0.992,-0.984,-0.98,-0.842,-0.889,-1.875,0.608,-0.903,-4.523,-1.059,-1.119,-0.591],"name":"LSTM Residuals","color":"#1f77b4"},{"data":[-0.077,-0.638,-0.9429999999999999,-0.677,-0.158,3.856,-1.065,-1.471,-0.349,-13.998,-2.26,-1.692,0.413,-0.298,-1.753,-0.235,-1.21,-0.129,-1.683,0.275,9.449999999999999,-16.08,-0.1,1.414,-0.695,-2.029,4.512],"name":"RNN Residuals","color":"#ff7f0e"}],"tooltip":{"shared":true},"legend":{"enabled":true}},"theme":{"chart":{"backgroundColor":"transparent"},"colors":["#7cb5ec","#434348","#90ed7d","#f7a35c","#8085e9","#f15c80","#e4d354","#2b908f","#f45b5b","#91e8e1"]},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadCSV":"Download CSV","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","downloadXLS":"Download XLS","drillUpText":"◁ Back to {series.name}","exitFullscreen":"Exit from full screen","exportData":{"annotationHeader":"Annotations","categoryDatetimeHeader":"DateTime","categoryHeader":"Category"},"hideData":"Hide data table","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbolMagnitude":1000,"numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"shortWeekdays":["Sat","Sun","Mon","Tue","Wed","Thu","Fri"],"thousandsSep":" ","viewData":"View data table","viewFullscreen":"View in full screen","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":[],"debug":false},"evals":["hc_opts.yAxis.labels.formatter"],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -1369,110 +1365,68 @@ N_h = \frac{N_s}{\alpha \cdot (N_i + N_o)}
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Go to Next Page</title>
+    <title>Contact Me</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-icons@v6.0.0/svgs/rstudio.svg">
     <style>
-        /* Global Styles */
-        body {
-            font-family: 'Tahoma', sans-serif;
-            display: flex;
-            flex-direction: column;  /* Stack content and footnote vertically */
-            justify-content: center;  /* Center content vertically */
-            align-items: center;      /* Center content horizontally */
-            margin: 0;
-            background-color: $secondary-color;
-            box-sizing: border-box;
-            min-height: 80vh; /* Adjusted to 80vh to ensure it's not too high */
-        }
-
-        /* Container Styling (Main Content) */
-        .container {
-            text-align: center;
-            padding: 20px 40px; /* Adjust padding for more compactness */
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            width: auto;  /* Auto width to fit content */
-            max-width: 380px;  /* Adjusted max-width for a smaller container */
-            box-sizing: border-box;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            margin-top: 20px;  /* Space from the top of the page */
-        }
-
-        /* Link Styling */
-        .link {
-            font-size: 20px;  /* Adjusted font size for readability */
-            color: #007bff;
-            text-decoration: none;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            cursor: pointer;
-            padding: 12px 30px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .link:hover {
-            color: #0056b3;
-            text-decoration: none;
-            background-color: #e6f0ff;
-        }
-
-        /* Arrow Styling */
-        .arrow {
-            margin-left: 12px;
-            font-size: 24px;
-            transition: transform 0.3s ease, font-size 0.3s ease;
-        }
-
-        .link:hover .arrow {
-            transform: translateX(8px);
-            font-size: 26px;
-        }
-
-        /* Focus State for Accessibility */
-        .link:focus {
-            outline: 2px solid #0056b3;
-        }
-
-        /* Footer Styling (Footnote) */
-        .footer {
-            font-size: 14px;
-            color: #777;
-            margin-top: 20px;  /* Space between content and footnote */
-            text-align: center;
-            width: 100%;
-        }
-
-        /* Mobile-Friendly Adjustments */
-        @media (max-width: 600px) {
-            .link {
-                font-size: 18px;
-                padding: 8px 15px;  /* Smaller padding for mobile devices */
-            }
-
-            .arrow {
-                font-size: 18px;
-                margin-left: 8px;
-            }
-
-            .container {
-                padding: 15px 30px;  /* Smaller padding on mobile */
-                max-width: 90%;  /* Ensure container fits better on small screens */
-            }
-        }
+        body { font-family: Arial, sans-serif; background-color: $secondary-color; }
+        .container { max-width: 400px; margin: auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
+        label { display: block; margin: 10px 0 5px; }
+        input[type="email"] { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; }
+        .github-button, .rpubs-button { margin-top: 20px; text-align: center; }
+        .github-button button, .rpubs-button button { background-color: #333; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; width: 100%; }
+        .github-button button:hover, .rpubs-button button:hover { background-color: #555; }
+        .rpubs-button button { background-color: #75AADB; }
+        .rpubs-button button:hover { background-color: #5A9BC2; }
+        .rpubs-icon { margin-right: 5px; width: 20px; vertical-align: middle; filter: brightness(0) invert(1); }
+        .error-message { color: red; font-size: 0.9em; margin-top: 5px; }
     </style>
 
 
     <div class="container">
-        <a href="https://loccx78vn.github.io/RNN_model/transfer.html" class="link" tabindex="0">
-            Go to Next Page
-            <span class="arrow">➔</span>
-        </a>
+        <h2 class="anchored">Contact Me</h2>
+        <form id="emailForm">
+            <label for="email">Your Email:</label>
+            <input type="email" id="email" name="email" required="" aria-label="Email Address">
+            <div class="error-message" id="error-message" style="display: none;">Please enter a valid email address.</div>
+            <button type="submit">Send Email</button>
+        </form>
+        <div class="github-button">
+            <button>
+                <a href="https://github.com/Loccx78vn/RNN_model" target="_blank" style="color: white; text-decoration: none;">
+                    <i class="fab fa-github"></i> View Code on GitHub
+                </a>
+            </button>
+        </div>
+        <div class="rpubs-button">
+            <button>
+                <a href="https://rpubs.com/loccx" target="_blank" style="color: white; text-decoration: none;">
+                    <img src="https://cdn.jsdelivr.net/npm/simple-icons@v6.0.0/icons/rstudio.svg" alt="RStudio icon" class="rpubs-icon"> Visit my RPubs
+                </a>
+            </button>
+        </div>
     </div>
+
+    <script>
+        document.getElementById('emailForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            const emailInput = document.getElementById('email');
+            const email = emailInput.value;
+            const errorMessage = document.getElementById('error-message');
+
+            // Simple email validation regex
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (emailPattern.test(email)) {
+                errorMessage.style.display = 'none'; // Hide error message
+                const yourEmail = 'loccaoxuan103@gmail.com'; // Your email
+                const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${yourEmail}&su=Help%20Request%20from%20${encodeURIComponent(email)}`;
+                window.open(gmailLink, '_blank'); // Open in new tab
+            } else {
+                errorMessage.style.display = 'block'; // Show error message
+            }
+        });
+    </script>
 
 
 
@@ -2928,113 +2882,71 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb11-857"><a href="#cb11-857" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;head&gt;</span></span>
 <span id="cb11-858"><a href="#cb11-858" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;meta charset="UTF-8"&gt;</span></span>
 <span id="cb11-859"><a href="#cb11-859" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></span>
-<span id="cb11-860"><a href="#cb11-860" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;title&gt;Go to Next Page&lt;/title&gt;</span></span>
-<span id="cb11-861"><a href="#cb11-861" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;style&gt;</span></span>
-<span id="cb11-862"><a href="#cb11-862" aria-hidden="true" tabindex="-1"></a><span class="in">        /* Global Styles */</span></span>
-<span id="cb11-863"><a href="#cb11-863" aria-hidden="true" tabindex="-1"></a><span class="in">        body {</span></span>
-<span id="cb11-864"><a href="#cb11-864" aria-hidden="true" tabindex="-1"></a><span class="in">            font-family: 'Tahoma', sans-serif;</span></span>
-<span id="cb11-865"><a href="#cb11-865" aria-hidden="true" tabindex="-1"></a><span class="in">            display: flex;</span></span>
-<span id="cb11-866"><a href="#cb11-866" aria-hidden="true" tabindex="-1"></a><span class="in">            flex-direction: column;  /* Stack content and footnote vertically */</span></span>
-<span id="cb11-867"><a href="#cb11-867" aria-hidden="true" tabindex="-1"></a><span class="in">            justify-content: center;  /* Center content vertically */</span></span>
-<span id="cb11-868"><a href="#cb11-868" aria-hidden="true" tabindex="-1"></a><span class="in">            align-items: center;      /* Center content horizontally */</span></span>
-<span id="cb11-869"><a href="#cb11-869" aria-hidden="true" tabindex="-1"></a><span class="in">            margin: 0;</span></span>
-<span id="cb11-870"><a href="#cb11-870" aria-hidden="true" tabindex="-1"></a><span class="in">            background-color: $secondary-color;</span></span>
-<span id="cb11-871"><a href="#cb11-871" aria-hidden="true" tabindex="-1"></a><span class="in">            box-sizing: border-box;</span></span>
-<span id="cb11-872"><a href="#cb11-872" aria-hidden="true" tabindex="-1"></a><span class="in">            min-height: 80vh; /* Adjusted to 80vh to ensure it's not too high */</span></span>
-<span id="cb11-873"><a href="#cb11-873" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
-<span id="cb11-874"><a href="#cb11-874" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-875"><a href="#cb11-875" aria-hidden="true" tabindex="-1"></a><span class="in">        /* Container Styling (Main Content) */</span></span>
-<span id="cb11-876"><a href="#cb11-876" aria-hidden="true" tabindex="-1"></a><span class="in">        .container {</span></span>
-<span id="cb11-877"><a href="#cb11-877" aria-hidden="true" tabindex="-1"></a><span class="in">            text-align: center;</span></span>
-<span id="cb11-878"><a href="#cb11-878" aria-hidden="true" tabindex="-1"></a><span class="in">            padding: 20px 40px; /* Adjust padding for more compactness */</span></span>
-<span id="cb11-879"><a href="#cb11-879" aria-hidden="true" tabindex="-1"></a><span class="in">            background-color: white;</span></span>
-<span id="cb11-880"><a href="#cb11-880" aria-hidden="true" tabindex="-1"></a><span class="in">            border-radius: 12px;</span></span>
-<span id="cb11-881"><a href="#cb11-881" aria-hidden="true" tabindex="-1"></a><span class="in">            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);</span></span>
-<span id="cb11-882"><a href="#cb11-882" aria-hidden="true" tabindex="-1"></a><span class="in">            width: auto;  /* Auto width to fit content */</span></span>
-<span id="cb11-883"><a href="#cb11-883" aria-hidden="true" tabindex="-1"></a><span class="in">            max-width: 380px;  /* Adjusted max-width for a smaller container */</span></span>
-<span id="cb11-884"><a href="#cb11-884" aria-hidden="true" tabindex="-1"></a><span class="in">            box-sizing: border-box;</span></span>
-<span id="cb11-885"><a href="#cb11-885" aria-hidden="true" tabindex="-1"></a><span class="in">            display: flex;</span></span>
-<span id="cb11-886"><a href="#cb11-886" aria-hidden="true" tabindex="-1"></a><span class="in">            justify-content: center;</span></span>
-<span id="cb11-887"><a href="#cb11-887" aria-hidden="true" tabindex="-1"></a><span class="in">            align-items: center;</span></span>
-<span id="cb11-888"><a href="#cb11-888" aria-hidden="true" tabindex="-1"></a><span class="in">            flex-direction: column;</span></span>
-<span id="cb11-889"><a href="#cb11-889" aria-hidden="true" tabindex="-1"></a><span class="in">            margin-top: 20px;  /* Space from the top of the page */</span></span>
-<span id="cb11-890"><a href="#cb11-890" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
-<span id="cb11-891"><a href="#cb11-891" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-892"><a href="#cb11-892" aria-hidden="true" tabindex="-1"></a><span class="in">        /* Link Styling */</span></span>
-<span id="cb11-893"><a href="#cb11-893" aria-hidden="true" tabindex="-1"></a><span class="in">        .link {</span></span>
-<span id="cb11-894"><a href="#cb11-894" aria-hidden="true" tabindex="-1"></a><span class="in">            font-size: 20px;  /* Adjusted font size for readability */</span></span>
-<span id="cb11-895"><a href="#cb11-895" aria-hidden="true" tabindex="-1"></a><span class="in">            color: #007bff;</span></span>
-<span id="cb11-896"><a href="#cb11-896" aria-hidden="true" tabindex="-1"></a><span class="in">            text-decoration: none;</span></span>
-<span id="cb11-897"><a href="#cb11-897" aria-hidden="true" tabindex="-1"></a><span class="in">            font-weight: 700;</span></span>
-<span id="cb11-898"><a href="#cb11-898" aria-hidden="true" tabindex="-1"></a><span class="in">            display: inline-flex;</span></span>
-<span id="cb11-899"><a href="#cb11-899" aria-hidden="true" tabindex="-1"></a><span class="in">            align-items: center;</span></span>
-<span id="cb11-900"><a href="#cb11-900" aria-hidden="true" tabindex="-1"></a><span class="in">            cursor: pointer;</span></span>
-<span id="cb11-901"><a href="#cb11-901" aria-hidden="true" tabindex="-1"></a><span class="in">            padding: 12px 30px;</span></span>
-<span id="cb11-902"><a href="#cb11-902" aria-hidden="true" tabindex="-1"></a><span class="in">            border-radius: 6px;</span></span>
-<span id="cb11-903"><a href="#cb11-903" aria-hidden="true" tabindex="-1"></a><span class="in">            transition: all 0.3s ease;</span></span>
-<span id="cb11-904"><a href="#cb11-904" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
-<span id="cb11-905"><a href="#cb11-905" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-906"><a href="#cb11-906" aria-hidden="true" tabindex="-1"></a><span class="in">        .link:hover {</span></span>
-<span id="cb11-907"><a href="#cb11-907" aria-hidden="true" tabindex="-1"></a><span class="in">            color: #0056b3;</span></span>
-<span id="cb11-908"><a href="#cb11-908" aria-hidden="true" tabindex="-1"></a><span class="in">            text-decoration: none;</span></span>
-<span id="cb11-909"><a href="#cb11-909" aria-hidden="true" tabindex="-1"></a><span class="in">            background-color: #e6f0ff;</span></span>
-<span id="cb11-910"><a href="#cb11-910" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
+<span id="cb11-860"><a href="#cb11-860" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;title&gt;Contact Me&lt;/title&gt;</span></span>
+<span id="cb11-861"><a href="#cb11-861" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"&gt;</span></span>
+<span id="cb11-862"><a href="#cb11-862" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-icons@v6.0.0/svgs/rstudio.svg"&gt;</span></span>
+<span id="cb11-863"><a href="#cb11-863" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;style&gt;</span></span>
+<span id="cb11-864"><a href="#cb11-864" aria-hidden="true" tabindex="-1"></a><span class="in">        body { font-family: Arial, sans-serif; background-color: $secondary-color; }</span></span>
+<span id="cb11-865"><a href="#cb11-865" aria-hidden="true" tabindex="-1"></a><span class="in">        .container { max-width: 400px; margin: auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }</span></span>
+<span id="cb11-866"><a href="#cb11-866" aria-hidden="true" tabindex="-1"></a><span class="in">        label { display: block; margin: 10px 0 5px; }</span></span>
+<span id="cb11-867"><a href="#cb11-867" aria-hidden="true" tabindex="-1"></a><span class="in">        input[type="email"] { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; }</span></span>
+<span id="cb11-868"><a href="#cb11-868" aria-hidden="true" tabindex="-1"></a><span class="in">        .github-button, .rpubs-button { margin-top: 20px; text-align: center; }</span></span>
+<span id="cb11-869"><a href="#cb11-869" aria-hidden="true" tabindex="-1"></a><span class="in">        .github-button button, .rpubs-button button { background-color: #333; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; width: 100%; }</span></span>
+<span id="cb11-870"><a href="#cb11-870" aria-hidden="true" tabindex="-1"></a><span class="in">        .github-button button:hover, .rpubs-button button:hover { background-color: #555; }</span></span>
+<span id="cb11-871"><a href="#cb11-871" aria-hidden="true" tabindex="-1"></a><span class="in">        .rpubs-button button { background-color: #75AADB; }</span></span>
+<span id="cb11-872"><a href="#cb11-872" aria-hidden="true" tabindex="-1"></a><span class="in">        .rpubs-button button:hover { background-color: #5A9BC2; }</span></span>
+<span id="cb11-873"><a href="#cb11-873" aria-hidden="true" tabindex="-1"></a><span class="in">        .rpubs-icon { margin-right: 5px; width: 20px; vertical-align: middle; filter: brightness(0) invert(1); }</span></span>
+<span id="cb11-874"><a href="#cb11-874" aria-hidden="true" tabindex="-1"></a><span class="in">        .error-message { color: red; font-size: 0.9em; margin-top: 5px; }</span></span>
+<span id="cb11-875"><a href="#cb11-875" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;/style&gt;</span></span>
+<span id="cb11-876"><a href="#cb11-876" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/head&gt;</span></span>
+<span id="cb11-877"><a href="#cb11-877" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;body&gt;</span></span>
+<span id="cb11-878"><a href="#cb11-878" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;div class="container"&gt;</span></span>
+<span id="cb11-879"><a href="#cb11-879" aria-hidden="true" tabindex="-1"></a><span class="in">        &lt;h2&gt;Contact Me&lt;/h2&gt;</span></span>
+<span id="cb11-880"><a href="#cb11-880" aria-hidden="true" tabindex="-1"></a><span class="in">        &lt;form id="emailForm"&gt;</span></span>
+<span id="cb11-881"><a href="#cb11-881" aria-hidden="true" tabindex="-1"></a><span class="in">            &lt;label for="email"&gt;Your Email:&lt;/label&gt;</span></span>
+<span id="cb11-882"><a href="#cb11-882" aria-hidden="true" tabindex="-1"></a><span class="in">            &lt;input type="email" id="email" name="email" required aria-label="Email Address"&gt;</span></span>
+<span id="cb11-883"><a href="#cb11-883" aria-hidden="true" tabindex="-1"></a><span class="in">            &lt;div class="error-message" id="error-message" style="display: none;"&gt;Please enter a valid email address.&lt;/div&gt;</span></span>
+<span id="cb11-884"><a href="#cb11-884" aria-hidden="true" tabindex="-1"></a><span class="in">            &lt;button type="submit"&gt;Send Email&lt;/button&gt;</span></span>
+<span id="cb11-885"><a href="#cb11-885" aria-hidden="true" tabindex="-1"></a><span class="in">        &lt;/form&gt;</span></span>
+<span id="cb11-886"><a href="#cb11-886" aria-hidden="true" tabindex="-1"></a><span class="in">        &lt;div class="github-button"&gt;</span></span>
+<span id="cb11-887"><a href="#cb11-887" aria-hidden="true" tabindex="-1"></a><span class="in">            &lt;button&gt;</span></span>
+<span id="cb11-888"><a href="#cb11-888" aria-hidden="true" tabindex="-1"></a><span class="in">                &lt;a href="https://github.com/Loccx78vn/RNN_model" target="_blank" style="color: white; text-decoration: none;"&gt;</span></span>
+<span id="cb11-889"><a href="#cb11-889" aria-hidden="true" tabindex="-1"></a><span class="in">                    &lt;i class="fab fa-github"&gt;&lt;/i&gt; View Code on GitHub</span></span>
+<span id="cb11-890"><a href="#cb11-890" aria-hidden="true" tabindex="-1"></a><span class="in">                &lt;/a&gt;</span></span>
+<span id="cb11-891"><a href="#cb11-891" aria-hidden="true" tabindex="-1"></a><span class="in">            &lt;/button&gt;</span></span>
+<span id="cb11-892"><a href="#cb11-892" aria-hidden="true" tabindex="-1"></a><span class="in">        &lt;/div&gt;</span></span>
+<span id="cb11-893"><a href="#cb11-893" aria-hidden="true" tabindex="-1"></a><span class="in">        &lt;div class="rpubs-button"&gt;</span></span>
+<span id="cb11-894"><a href="#cb11-894" aria-hidden="true" tabindex="-1"></a><span class="in">            &lt;button&gt;</span></span>
+<span id="cb11-895"><a href="#cb11-895" aria-hidden="true" tabindex="-1"></a><span class="in">                &lt;a href="https://rpubs.com/loccx" target="_blank" style="color: white; text-decoration: none;"&gt;</span></span>
+<span id="cb11-896"><a href="#cb11-896" aria-hidden="true" tabindex="-1"></a><span class="in">                    &lt;img src="https://cdn.jsdelivr.net/npm/simple-icons@v6.0.0/icons/rstudio.svg" alt="RStudio icon" class="rpubs-icon"&gt; Visit my RPubs</span></span>
+<span id="cb11-897"><a href="#cb11-897" aria-hidden="true" tabindex="-1"></a><span class="in">                &lt;/a&gt;</span></span>
+<span id="cb11-898"><a href="#cb11-898" aria-hidden="true" tabindex="-1"></a><span class="in">            &lt;/button&gt;</span></span>
+<span id="cb11-899"><a href="#cb11-899" aria-hidden="true" tabindex="-1"></a><span class="in">        &lt;/div&gt;</span></span>
+<span id="cb11-900"><a href="#cb11-900" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;/div&gt;</span></span>
+<span id="cb11-901"><a href="#cb11-901" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-902"><a href="#cb11-902" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;script&gt;</span></span>
+<span id="cb11-903"><a href="#cb11-903" aria-hidden="true" tabindex="-1"></a><span class="in">        document.getElementById('emailForm').addEventListener('submit', function(event) {</span></span>
+<span id="cb11-904"><a href="#cb11-904" aria-hidden="true" tabindex="-1"></a><span class="in">            event.preventDefault(); // Prevent default form submission</span></span>
+<span id="cb11-905"><a href="#cb11-905" aria-hidden="true" tabindex="-1"></a><span class="in">            const emailInput = document.getElementById('email');</span></span>
+<span id="cb11-906"><a href="#cb11-906" aria-hidden="true" tabindex="-1"></a><span class="in">            const email = emailInput.value;</span></span>
+<span id="cb11-907"><a href="#cb11-907" aria-hidden="true" tabindex="-1"></a><span class="in">            const errorMessage = document.getElementById('error-message');</span></span>
+<span id="cb11-908"><a href="#cb11-908" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-909"><a href="#cb11-909" aria-hidden="true" tabindex="-1"></a><span class="in">            // Simple email validation regex</span></span>
+<span id="cb11-910"><a href="#cb11-910" aria-hidden="true" tabindex="-1"></a><span class="in">            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;</span></span>
 <span id="cb11-911"><a href="#cb11-911" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-912"><a href="#cb11-912" aria-hidden="true" tabindex="-1"></a><span class="in">        /* Arrow Styling */</span></span>
-<span id="cb11-913"><a href="#cb11-913" aria-hidden="true" tabindex="-1"></a><span class="in">        .arrow {</span></span>
-<span id="cb11-914"><a href="#cb11-914" aria-hidden="true" tabindex="-1"></a><span class="in">            margin-left: 12px;</span></span>
-<span id="cb11-915"><a href="#cb11-915" aria-hidden="true" tabindex="-1"></a><span class="in">            font-size: 24px;</span></span>
-<span id="cb11-916"><a href="#cb11-916" aria-hidden="true" tabindex="-1"></a><span class="in">            transition: transform 0.3s ease, font-size 0.3s ease;</span></span>
-<span id="cb11-917"><a href="#cb11-917" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
-<span id="cb11-918"><a href="#cb11-918" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-919"><a href="#cb11-919" aria-hidden="true" tabindex="-1"></a><span class="in">        .link:hover .arrow {</span></span>
-<span id="cb11-920"><a href="#cb11-920" aria-hidden="true" tabindex="-1"></a><span class="in">            transform: translateX(8px);</span></span>
-<span id="cb11-921"><a href="#cb11-921" aria-hidden="true" tabindex="-1"></a><span class="in">            font-size: 26px;</span></span>
-<span id="cb11-922"><a href="#cb11-922" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
-<span id="cb11-923"><a href="#cb11-923" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-924"><a href="#cb11-924" aria-hidden="true" tabindex="-1"></a><span class="in">        /* Focus State for Accessibility */</span></span>
-<span id="cb11-925"><a href="#cb11-925" aria-hidden="true" tabindex="-1"></a><span class="in">        .link:focus {</span></span>
-<span id="cb11-926"><a href="#cb11-926" aria-hidden="true" tabindex="-1"></a><span class="in">            outline: 2px solid #0056b3;</span></span>
-<span id="cb11-927"><a href="#cb11-927" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
-<span id="cb11-928"><a href="#cb11-928" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-929"><a href="#cb11-929" aria-hidden="true" tabindex="-1"></a><span class="in">        /* Footer Styling (Footnote) */</span></span>
-<span id="cb11-930"><a href="#cb11-930" aria-hidden="true" tabindex="-1"></a><span class="in">        .footer {</span></span>
-<span id="cb11-931"><a href="#cb11-931" aria-hidden="true" tabindex="-1"></a><span class="in">            font-size: 14px;</span></span>
-<span id="cb11-932"><a href="#cb11-932" aria-hidden="true" tabindex="-1"></a><span class="in">            color: #777;</span></span>
-<span id="cb11-933"><a href="#cb11-933" aria-hidden="true" tabindex="-1"></a><span class="in">            margin-top: 20px;  /* Space between content and footnote */</span></span>
-<span id="cb11-934"><a href="#cb11-934" aria-hidden="true" tabindex="-1"></a><span class="in">            text-align: center;</span></span>
-<span id="cb11-935"><a href="#cb11-935" aria-hidden="true" tabindex="-1"></a><span class="in">            width: 100%;</span></span>
-<span id="cb11-936"><a href="#cb11-936" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
-<span id="cb11-937"><a href="#cb11-937" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-938"><a href="#cb11-938" aria-hidden="true" tabindex="-1"></a><span class="in">        /* Mobile-Friendly Adjustments */</span></span>
-<span id="cb11-939"><a href="#cb11-939" aria-hidden="true" tabindex="-1"></a><span class="in">        @media (max-width: 600px) {</span></span>
-<span id="cb11-940"><a href="#cb11-940" aria-hidden="true" tabindex="-1"></a><span class="in">            .link {</span></span>
-<span id="cb11-941"><a href="#cb11-941" aria-hidden="true" tabindex="-1"></a><span class="in">                font-size: 18px;</span></span>
-<span id="cb11-942"><a href="#cb11-942" aria-hidden="true" tabindex="-1"></a><span class="in">                padding: 8px 15px;  /* Smaller padding for mobile devices */</span></span>
-<span id="cb11-943"><a href="#cb11-943" aria-hidden="true" tabindex="-1"></a><span class="in">            }</span></span>
-<span id="cb11-944"><a href="#cb11-944" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-945"><a href="#cb11-945" aria-hidden="true" tabindex="-1"></a><span class="in">            .arrow {</span></span>
-<span id="cb11-946"><a href="#cb11-946" aria-hidden="true" tabindex="-1"></a><span class="in">                font-size: 18px;</span></span>
-<span id="cb11-947"><a href="#cb11-947" aria-hidden="true" tabindex="-1"></a><span class="in">                margin-left: 8px;</span></span>
-<span id="cb11-948"><a href="#cb11-948" aria-hidden="true" tabindex="-1"></a><span class="in">            }</span></span>
-<span id="cb11-949"><a href="#cb11-949" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-950"><a href="#cb11-950" aria-hidden="true" tabindex="-1"></a><span class="in">            .container {</span></span>
-<span id="cb11-951"><a href="#cb11-951" aria-hidden="true" tabindex="-1"></a><span class="in">                padding: 15px 30px;  /* Smaller padding on mobile */</span></span>
-<span id="cb11-952"><a href="#cb11-952" aria-hidden="true" tabindex="-1"></a><span class="in">                max-width: 90%;  /* Ensure container fits better on small screens */</span></span>
-<span id="cb11-953"><a href="#cb11-953" aria-hidden="true" tabindex="-1"></a><span class="in">            }</span></span>
-<span id="cb11-954"><a href="#cb11-954" aria-hidden="true" tabindex="-1"></a><span class="in">        }</span></span>
-<span id="cb11-955"><a href="#cb11-955" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;/style&gt;</span></span>
-<span id="cb11-956"><a href="#cb11-956" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/head&gt;</span></span>
-<span id="cb11-957"><a href="#cb11-957" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;body&gt;</span></span>
-<span id="cb11-958"><a href="#cb11-958" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;div class="container"&gt;</span></span>
-<span id="cb11-959"><a href="#cb11-959" aria-hidden="true" tabindex="-1"></a><span class="in">        &lt;a href="https://loccx78vn.github.io/RNN_model/transfer.html" class="link" tabindex="0"&gt;</span></span>
-<span id="cb11-960"><a href="#cb11-960" aria-hidden="true" tabindex="-1"></a><span class="in">            Go to Next Page</span></span>
-<span id="cb11-961"><a href="#cb11-961" aria-hidden="true" tabindex="-1"></a><span class="in">            &lt;span class="arrow"&gt;➔&lt;/span&gt;</span></span>
-<span id="cb11-962"><a href="#cb11-962" aria-hidden="true" tabindex="-1"></a><span class="in">        &lt;/a&gt;</span></span>
-<span id="cb11-963"><a href="#cb11-963" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;/div&gt;</span></span>
-<span id="cb11-964"><a href="#cb11-964" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/body&gt;</span></span>
-<span id="cb11-965"><a href="#cb11-965" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/html&gt;</span></span>
-<span id="cb11-966"><a href="#cb11-966" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-912"><a href="#cb11-912" aria-hidden="true" tabindex="-1"></a><span class="in">            if (emailPattern.test(email)) {</span></span>
+<span id="cb11-913"><a href="#cb11-913" aria-hidden="true" tabindex="-1"></a><span class="in">                errorMessage.style.display = 'none'; // Hide error message</span></span>
+<span id="cb11-914"><a href="#cb11-914" aria-hidden="true" tabindex="-1"></a><span class="in">                const yourEmail = 'loccaoxuan103@gmail.com'; // Your email</span></span>
+<span id="cb11-915"><a href="#cb11-915" aria-hidden="true" tabindex="-1"></a><span class="in">                const gmailLink = `https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=${yourEmail}&amp;su=Help%20Request%20from%20${encodeURIComponent(email)}`;</span></span>
+<span id="cb11-916"><a href="#cb11-916" aria-hidden="true" tabindex="-1"></a><span class="in">                window.open(gmailLink, '_blank'); // Open in new tab</span></span>
+<span id="cb11-917"><a href="#cb11-917" aria-hidden="true" tabindex="-1"></a><span class="in">            } else {</span></span>
+<span id="cb11-918"><a href="#cb11-918" aria-hidden="true" tabindex="-1"></a><span class="in">                errorMessage.style.display = 'block'; // Show error message</span></span>
+<span id="cb11-919"><a href="#cb11-919" aria-hidden="true" tabindex="-1"></a><span class="in">            }</span></span>
+<span id="cb11-920"><a href="#cb11-920" aria-hidden="true" tabindex="-1"></a><span class="in">        });</span></span>
+<span id="cb11-921"><a href="#cb11-921" aria-hidden="true" tabindex="-1"></a><span class="in">    &lt;/script&gt;</span></span>
+<span id="cb11-922"><a href="#cb11-922" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/body&gt;</span></span>
+<span id="cb11-923"><a href="#cb11-923" aria-hidden="true" tabindex="-1"></a><span class="in">&lt;/html&gt;</span></span>
+<span id="cb11-924"><a href="#cb11-924" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

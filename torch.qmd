@@ -829,110 +829,69 @@ Như vậy, chúng ta đã được học về mô hình *RNN* và *LSTM* và c�
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Go to Next Page</title>
+    <title>Contact Me</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-icons@v6.0.0/svgs/rstudio.svg">
     <style>
-        /* Global Styles */
-        body {
-            font-family: 'Tahoma', sans-serif;
-            display: flex;
-            flex-direction: column;  /* Stack content and footnote vertically */
-            justify-content: center;  /* Center content vertically */
-            align-items: center;      /* Center content horizontally */
-            margin: 0;
-            background-color: $secondary-color;
-            box-sizing: border-box;
-            min-height: 80vh; /* Adjusted to 80vh to ensure it's not too high */
-        }
-
-        /* Container Styling (Main Content) */
-        .container {
-            text-align: center;
-            padding: 20px 40px; /* Adjust padding for more compactness */
-            background-color: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            width: auto;  /* Auto width to fit content */
-            max-width: 380px;  /* Adjusted max-width for a smaller container */
-            box-sizing: border-box;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            margin-top: 20px;  /* Space from the top of the page */
-        }
-
-        /* Link Styling */
-        .link {
-            font-size: 20px;  /* Adjusted font size for readability */
-            color: #007bff;
-            text-decoration: none;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            cursor: pointer;
-            padding: 12px 30px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .link:hover {
-            color: #0056b3;
-            text-decoration: none;
-            background-color: #e6f0ff;
-        }
-
-        /* Arrow Styling */
-        .arrow {
-            margin-left: 12px;
-            font-size: 24px;
-            transition: transform 0.3s ease, font-size 0.3s ease;
-        }
-
-        .link:hover .arrow {
-            transform: translateX(8px);
-            font-size: 26px;
-        }
-
-        /* Focus State for Accessibility */
-        .link:focus {
-            outline: 2px solid #0056b3;
-        }
-
-        /* Footer Styling (Footnote) */
-        .footer {
-            font-size: 14px;
-            color: #777;
-            margin-top: 20px;  /* Space between content and footnote */
-            text-align: center;
-            width: 100%;
-        }
-
-        /* Mobile-Friendly Adjustments */
-        @media (max-width: 600px) {
-            .link {
-                font-size: 18px;
-                padding: 8px 15px;  /* Smaller padding for mobile devices */
-            }
-
-            .arrow {
-                font-size: 18px;
-                margin-left: 8px;
-            }
-
-            .container {
-                padding: 15px 30px;  /* Smaller padding on mobile */
-                max-width: 90%;  /* Ensure container fits better on small screens */
-            }
-        }
+        body { font-family: Arial, sans-serif; background-color: $secondary-color; }
+        .container { max-width: 400px; margin: auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
+        label { display: block; margin: 10px 0 5px; }
+        input[type="email"] { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; }
+        .github-button, .rpubs-button { margin-top: 20px; text-align: center; }
+        .github-button button, .rpubs-button button { background-color: #333; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; width: 100%; }
+        .github-button button:hover, .rpubs-button button:hover { background-color: #555; }
+        .rpubs-button button { background-color: #75AADB; }
+        .rpubs-button button:hover { background-color: #5A9BC2; }
+        .rpubs-icon { margin-right: 5px; width: 20px; vertical-align: middle; filter: brightness(0) invert(1); }
+        .error-message { color: red; font-size: 0.9em; margin-top: 5px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="https://loccx78vn.github.io/RNN_model/transfer.html" class="link" tabindex="0">
-            Go to Next Page
-            <span class="arrow">➔</span>
-        </a>
+        <h2>Contact Me</h2>
+        <form id="emailForm">
+            <label for="email">Your Email:</label>
+            <input type="email" id="email" name="email" required aria-label="Email Address">
+            <div class="error-message" id="error-message" style="display: none;">Please enter a valid email address.</div>
+            <button type="submit">Send Email</button>
+        </form>
+        <div class="github-button">
+            <button>
+                <a href="https://github.com/Loccx78vn/RNN_model" target="_blank" style="color: white; text-decoration: none;">
+                    <i class="fab fa-github"></i> View Code on GitHub
+                </a>
+            </button>
+        </div>
+        <div class="rpubs-button">
+            <button>
+                <a href="https://rpubs.com/loccx" target="_blank" style="color: white; text-decoration: none;">
+                    <img src="https://cdn.jsdelivr.net/npm/simple-icons@v6.0.0/icons/rstudio.svg" alt="RStudio icon" class="rpubs-icon"> Visit my RPubs
+                </a>
+            </button>
+        </div>
     </div>
+
+    <script>
+        document.getElementById('emailForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            const emailInput = document.getElementById('email');
+            const email = emailInput.value;
+            const errorMessage = document.getElementById('error-message');
+
+            // Simple email validation regex
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (emailPattern.test(email)) {
+                errorMessage.style.display = 'none'; // Hide error message
+                const yourEmail = 'loccaoxuan103@gmail.com'; // Your email
+                const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${yourEmail}&su=Help%20Request%20from%20${encodeURIComponent(email)}`;
+                window.open(gmailLink, '_blank'); // Open in new tab
+            } else {
+                errorMessage.style.display = 'block'; // Show error message
+            }
+        });
+    </script>
 </body>
 </html>
 ```
+
