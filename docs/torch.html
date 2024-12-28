@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>RNN and LSTM model – Time series model 2</title>
+<title>RNN and LSTM model – Transformer model</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -73,8 +73,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-a4a11d514c7d463668e07712114998e6.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-fe64a206d7279f15d3f0f0dd3f7ef5b3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-125b9b3157c40bd7b5c50432b13df477.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -245,7 +245,7 @@ window.Quarto = {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">Time series model 2</span>
+    <span class="navbar-title">Transformer model</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -258,9 +258,13 @@ window.Quarto = {
     <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="./transfer.qmd"> 
+<span class="menu-text"></span></a>
+  </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./torch.html" aria-current="page"> 
-<span class="menu-text">RNN and LSTM model</span></a>
+    <a class="nav-link" href="./practice.html"> 
+<span class="menu-text">Time series forecasting</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -672,7 +676,7 @@ MSE = \frac{1}{n} \sum_{i=1}^{n} (y_{\text{pred}}(i) - y_{\text{true}}(i))^2
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">predict</span>(x_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>1/1 - 0s - 261ms/step</code></pre>
+<pre><code>1/1 - 0s - 454ms/step</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
@@ -719,7 +723,7 @@ MSE = \frac{1}{n} \sum_{i=1}^{n} (y_{\text{pred}}(i) - y_{\text{true}}(i))^2
 </details>
 <div class="cell-output-display">
 <div class="highchart html-widget html-fill-item" id="htmlwidget-10e113bfb0d94b57d7e5" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-10e113bfb0d94b57d7e5">{"x":{"hc_opts":{"chart":{"reflow":true},"title":{"text":"Time Series Forecasting with Highcharts"},"yAxis":{"title":{"text":"Value"},"plotLines":[{"value":0,"width":1,"color":"gray"}]},"credits":{"enabled":false},"exporting":{"enabled":false},"boost":{"enabled":false},"plotOptions":{"series":{"label":{"enabled":false},"turboThreshold":0},"treemap":{"layoutAlgorithm":"squarified"}},"xAxis":{"categories":null,"title":{"text":"Time"}},"series":[{"data":[-1.107158472156665,1.081538276106759,-1.55612190769788,-1.331640189927273,-0.9387971838287095,0.1836114050243284,0.5764544111228918,0.5203339816802398,1.081538276106759,0.01525011669637273,-0.2092316010742349,-0.4337133188448424,0.5764544111228918,-0.8826767543860576,0.7448156994508474,1.586622141090626,-1.500001478255228,0.5764544111228918,0.2397318344669803,0.6325748405655436,-0.09699074218893107,0.07137054613902463,1.69886299997593,-0.04087031274627917,-1.500001478255228,-0.6020746071727981,0.1836114050243284],"name":"Actual Data","type":"line","color":"#1f77b4"},{"data":[-0.9324171543121338,0.2872019708156586,-0.3612872362136841,-0.3541276156902313,0.03798284754157066,0.4330086410045624,-0.5392088294029236,-0.7345243692398071,1.13161027431488,-0.121529147028923,-0.8126715421676636,0.3862707912921906,1.017809629440308,-0.7785512208938599,-1.042561650276184,0.9883020520210266,0.155557855963707,0.2579160332679749,0.3654913604259491,0.3244177401065826,-0.6048127412796021,-0.6656824350357056,0.8845527172088623,-0.4110614061355591,-0.870338499546051,0.1895084232091904,1.051501870155334],"name":"Forecast","type":"line","color":"#ff7f0e"}],"tooltip":{"shared":true,"crosshairs":true},"legend":{"enabled":true}},"theme":{"chart":{"backgroundColor":"transparent"},"colors":["#7cb5ec","#434348","#90ed7d","#f7a35c","#8085e9","#f15c80","#e4d354","#2b908f","#f45b5b","#91e8e1"]},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadCSV":"Download CSV","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","downloadXLS":"Download XLS","drillUpText":"◁ Back to {series.name}","exitFullscreen":"Exit from full screen","exportData":{"annotationHeader":"Annotations","categoryDatetimeHeader":"DateTime","categoryHeader":"Category"},"hideData":"Hide data table","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbolMagnitude":1000,"numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"shortWeekdays":["Sat","Sun","Mon","Tue","Wed","Thu","Fri"],"thousandsSep":" ","viewData":"View data table","viewFullscreen":"View in full screen","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":[],"debug":false},"evals":[],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-10e113bfb0d94b57d7e5">{"x":{"hc_opts":{"chart":{"reflow":true},"title":{"text":"Time Series Forecasting with Highcharts"},"yAxis":{"title":{"text":"Value"},"plotLines":[{"value":0,"width":1,"color":"gray"}]},"credits":{"enabled":false},"exporting":{"enabled":false},"boost":{"enabled":false},"plotOptions":{"series":{"label":{"enabled":false},"turboThreshold":0},"treemap":{"layoutAlgorithm":"squarified"}},"xAxis":{"categories":null,"title":{"text":"Time"}},"series":[{"data":[-1.107158472156665,1.081538276106759,-1.55612190769788,-1.331640189927273,-0.9387971838287095,0.1836114050243284,0.5764544111228918,0.5203339816802398,1.081538276106759,0.01525011669637273,-0.2092316010742349,-0.4337133188448424,0.5764544111228918,-0.8826767543860576,0.7448156994508474,1.586622141090626,-1.500001478255228,0.5764544111228918,0.2397318344669803,0.6325748405655436,-0.09699074218893107,0.07137054613902463,1.69886299997593,-0.04087031274627917,-1.500001478255228,-0.6020746071727981,0.1836114050243284],"name":"Actual Data","type":"line","color":"#1f77b4"},{"data":[0.04461503401398659,0.2692233920097351,-0.006288964301347733,-0.3756470680236816,0.1637663245201111,0.1068451255559921,-0.8002327084541321,-0.3810099065303802,1.409126162528992,-0.05330170318484306,-0.972364604473114,0.1550320684909821,0.9614682793617249,-0.9884955286979675,-0.8839547634124756,0.836478054523468,-0.2743905186653137,0.1881692409515381,-0.1454831212759018,0.2456993460655212,-0.1999506801366806,-0.7886577248573303,1.871401071548462,0.04627852514386177,-0.9508610367774963,0.1264337748289108,0.8784328699111938],"name":"Forecast","type":"line","color":"#ff7f0e"}],"tooltip":{"shared":true,"crosshairs":true},"legend":{"enabled":true}},"theme":{"chart":{"backgroundColor":"transparent"},"colors":["#7cb5ec","#434348","#90ed7d","#f7a35c","#8085e9","#f15c80","#e4d354","#2b908f","#f45b5b","#91e8e1"]},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadCSV":"Download CSV","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","downloadXLS":"Download XLS","drillUpText":"◁ Back to {series.name}","exitFullscreen":"Exit from full screen","exportData":{"annotationHeader":"Annotations","categoryDatetimeHeader":"DateTime","categoryHeader":"Category"},"hideData":"Hide data table","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbolMagnitude":1000,"numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"shortWeekdays":["Sat","Sun","Mon","Tue","Wed","Thu","Fri"],"thousandsSep":" ","viewData":"View data table","viewFullscreen":"View in full screen","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":[],"debug":false},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -1233,13 +1237,13 @@ MSE = \frac{1}{n} \sum_{i=1}^{n} (y_{\text{pred}}(i) - y_{\text{true}}(i))^2
 <tbody class="gt_table_body">
 <tr class="odd">
 <td class="gt_row gt_left" headers="Model">RNN</td>
-<td class="gt_row gt_right" headers="MSE">0.667671</td>
-<td class="gt_row gt_right" headers="MAE">0.791753</td>
+<td class="gt_row gt_right" headers="MSE">0.655601</td>
+<td class="gt_row gt_right" headers="MAE">0.790752</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left" headers="Model">LSTM</td>
-<td class="gt_row gt_right" headers="MSE">0.681708</td>
-<td class="gt_row gt_right" headers="MAE">0.736382</td>
+<td class="gt_row gt_right" headers="MSE">0.671340</td>
+<td class="gt_row gt_right" headers="MAE">0.736131</td>
 </tr>
 </tbody>
 </table>
@@ -1255,7 +1259,7 @@ MSE = \frac{1}{n} \sum_{i=1}^{n} (y_{\text{pred}}(i) - y_{\text{true}}(i))^2
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">predict</span>(x_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>1/1 - 0s - 314ms/step</code></pre>
+<pre><code>1/1 - 0s - 338ms/step</code></pre>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
@@ -1296,7 +1300,7 @@ MSE = \frac{1}{n} \sum_{i=1}^{n} (y_{\text{pred}}(i) - y_{\text{true}}(i))^2
 </details>
 <div class="cell-output-display">
 <div class="highchart html-widget html-fill-item" id="htmlwidget-9dd5ddb2c96fa0698618" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-9dd5ddb2c96fa0698618">{"x":{"hc_opts":{"chart":{"reflow":true,"type":"line"},"title":{"text":"Residual Comparison: LSTM vs RNN"},"yAxis":{"title":{"text":"Residuals"},"labels":{"formatter":"function() { return (this.value).toFixed(0) + '%'; }"},"plotLines":[{"value":0,"color":"gray","width":1,"dashStyle":"Dash"}]},"credits":{"enabled":false},"exporting":{"enabled":false},"boost":{"enabled":false},"plotOptions":{"series":{"label":{"enabled":false},"turboThreshold":0},"treemap":{"layoutAlgorithm":"squarified"}},"xAxis":{"categories":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27],"title":{"text":"Date"}},"series":[{"data":[-1.079,-0.921,-0.983,-0.912,-0.827,-1.774,-1.174,-1.112,-1.014,-2.883,-0.746,-0.829,-1.108,-0.905,-1.037,-0.987,-0.978,-0.989,-0.852,-0.881,-1.966,0.919,-0.876,-5.411,-1.071,-1.132,-0.578],"name":"LSTM Residuals","color":"#1f77b4"},{"data":[-0.158,-0.734,-0.768,-0.734,-1.04,1.358,-1.935,-2.412,0.046,-8.968999999999999,2.884,-1.891,0.766,-0.118,-2.4,-0.377,-1.104,-0.553,0.525,-0.487,5.236,-10.327,-0.479,9.058,-0.42,-1.315,4.727],"name":"RNN Residuals","color":"#ff7f0e"}],"tooltip":{"shared":true},"legend":{"enabled":true}},"theme":{"chart":{"backgroundColor":"transparent"},"colors":["#7cb5ec","#434348","#90ed7d","#f7a35c","#8085e9","#f15c80","#e4d354","#2b908f","#f45b5b","#91e8e1"]},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadCSV":"Download CSV","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","downloadXLS":"Download XLS","drillUpText":"◁ Back to {series.name}","exitFullscreen":"Exit from full screen","exportData":{"annotationHeader":"Annotations","categoryDatetimeHeader":"DateTime","categoryHeader":"Category"},"hideData":"Hide data table","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbolMagnitude":1000,"numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"shortWeekdays":["Sat","Sun","Mon","Tue","Wed","Thu","Fri"],"thousandsSep":" ","viewData":"View data table","viewFullscreen":"View in full screen","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":[],"debug":false},"evals":["hc_opts.yAxis.labels.formatter"],"jsHooks":[]}</script>
+<script type="application/json" data-for="htmlwidget-9dd5ddb2c96fa0698618">{"x":{"hc_opts":{"chart":{"reflow":true,"type":"line"},"title":{"text":"Residual Comparison: LSTM vs RNN"},"yAxis":{"title":{"text":"Residuals"},"labels":{"formatter":"function() { return (this.value).toFixed(0) + '%'; }"},"plotLines":[{"value":0,"color":"gray","width":1,"dashStyle":"Dash"}]},"credits":{"enabled":false},"exporting":{"enabled":false},"boost":{"enabled":false},"plotOptions":{"series":{"label":{"enabled":false},"turboThreshold":0},"treemap":{"layoutAlgorithm":"squarified"}},"xAxis":{"categories":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27],"title":{"text":"Date"}},"series":[{"data":[-1.075,-0.922,-0.982,-0.909,-0.8169999999999999,-1.821,-1.183,-1.118,-1.012,-2.645,-0.767,-0.837,-1.098,-0.907,-1.031,-0.982,-0.979,-0.981,-0.83,-0.872,-2.014,0.984,-0.872,-5.652,-1.078,-1.151,-0.502],"name":"LSTM Residuals","color":"#1f77b4"},{"data":[-1.04,-0.751,-0.996,-0.718,-1.174,-0.418,-2.388,-1.732,0.303,-4.495,3.647,-1.357,0.668,0.12,-2.187,-0.473,-0.8169999999999999,-0.674,-1.607,-0.612,1.062,-12.05,0.102,-2.132,-0.366,-1.21,3.784],"name":"RNN Residuals","color":"#ff7f0e"}],"tooltip":{"shared":true},"legend":{"enabled":true}},"theme":{"chart":{"backgroundColor":"transparent"},"colors":["#7cb5ec","#434348","#90ed7d","#f7a35c","#8085e9","#f15c80","#e4d354","#2b908f","#f45b5b","#91e8e1"]},"conf_opts":{"global":{"Date":null,"VMLRadialGradientURL":"http =//code.highcharts.com/list(version)/gfx/vml-radial-gradient.png","canvasToolsURL":"http =//code.highcharts.com/list(version)/modules/canvas-tools.js","getTimezoneOffset":null,"timezoneOffset":0,"useUTC":true},"lang":{"contextButtonTitle":"Chart context menu","decimalPoint":".","downloadCSV":"Download CSV","downloadJPEG":"Download JPEG image","downloadPDF":"Download PDF document","downloadPNG":"Download PNG image","downloadSVG":"Download SVG vector image","downloadXLS":"Download XLS","drillUpText":"◁ Back to {series.name}","exitFullscreen":"Exit from full screen","exportData":{"annotationHeader":"Annotations","categoryDatetimeHeader":"DateTime","categoryHeader":"Category"},"hideData":"Hide data table","invalidDate":null,"loading":"Loading...","months":["January","February","March","April","May","June","July","August","September","October","November","December"],"noData":"No data to display","numericSymbolMagnitude":1000,"numericSymbols":["k","M","G","T","P","E"],"printChart":"Print chart","resetZoom":"Reset zoom","resetZoomTitle":"Reset zoom level 1:1","shortMonths":["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"shortWeekdays":["Sat","Sun","Mon","Tue","Wed","Thu","Fri"],"thousandsSep":" ","viewData":"View data table","viewFullscreen":"View in full screen","weekdays":["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]}},"type":"chart","fonts":[],"debug":false},"evals":["hc_opts.yAxis.labels.formatter"],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
