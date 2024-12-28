@@ -42,7 +42,9 @@ Vậy giả sử như hôm nay học được từ "Hôm" thì nó sẽ bắt đ
 
 $$
    \mathbf{h}_t = \text{activation}(\mathbf{W}_\text{hh} \mathbf{h}_{t-1} + \mathbf{W}_\text{xh} \mathbf{x}_t + \mathbf{b}_\text{h})
-$$ Sau đó, $h_t$ sẽ được làm input cho các *state* sau và dựa vào đó để tính output với công thức là:
+$$
+
+Sau đó, $h_t$ sẽ được làm input cho các *state* sau và dựa vào đó để tính output với công thức là:
 
 $$
 y_t = W_y \cdot h_t + b_y
@@ -64,17 +66,27 @@ Mình sẽ gán từng từ đơn sang dạng số như:
 
 -   *Bước 2:* Thêm hidden layer và bắt đầu tính toán:
 
-Cho input: "I" $$
+Cho input: "I"
+
+$$
    h_1 = \tanh(W_x \cdot x_1 + W_h \cdot h_0 + b)
 $$
 
-Cho input: "am" $$
+Cho input: "am"
+
+$$
    h_2 = \tanh(W_x \cdot x_2 + W_h \cdot h_1 + b)
-$$ Cho input: "reading" $$
+$$
+
+Cho input: "reading"
+
+$$
    h_3 = \tanh(W_x \cdot x_3 + W_h \cdot h_2 + b)
 $$
 
-Cho input: "book" $$
+Cho input: "book"
+
+$$
    h_4 = \tanh(W_x \cdot x_4 + W_h \cdot h_3 + b)
 $$
 
@@ -82,7 +94,9 @@ $$
 
 $$
 \hat{y} = \text{softmax}(W_y \cdot h_4 + b_y)
-$$ Nếu muốn hiểu thêm về cách hoạt động *RNN*, bạn có thể tham khảo link này: [Recurrent Neural Network: Từ RNN đến LSTM](https://viblo.asia/p/recurrent-neural-network-tu-rnn-den-lstm-gGJ597z1ZX2).
+$$
+
+Nếu muốn hiểu thêm về cách hoạt động *RNN*, bạn có thể tham khảo link này: [Recurrent Neural Network: Từ RNN đến LSTM](https://viblo.asia/p/recurrent-neural-network-tu-rnn-den-lstm-gGJ597z1ZX2).
 
 ### Vấn đề lớn của RNN:
 
@@ -156,7 +170,10 @@ tidyverse,
 dplyr,
 tidyr,
 magrittr,
-ggplot2)
+ggplot2,
+keras3,
+tensorflow,
+reticulate)
 ```
 
 ```{r}
@@ -358,12 +375,12 @@ product_a_ts <- ts(sales_data$Product_A, start = c(2024, 5),
 time_series_data<-scale(product_a_ts)
 
 library(highcharter)
-highchart() %>%
-  hc_add_series(data = as.numeric(time_series_data), type = "line", name = "Sales of Product A") %>%
-  hc_title(text = "Normalized Time Series of Product A") %>%
-  hc_xAxis(title = list(text = "Date")) %>%
-  hc_yAxis(title = list(text = "Normalized Sales")) %>%
-  hc_tooltip(shared = TRUE) %>%
+highchart() |>
+  hc_add_series(data = as.numeric(time_series_data), type = "line", name = "Sales of Product A") |>
+  hc_title(text = "Normalized Time Series of Product A") |>
+  hc_xAxis(title = list(text = "Date")) |>
+  hc_yAxis(title = list(text = "Normalized Sales")) |>
+  hc_tooltip(shared = TRUE) |>
   hc_plotOptions(line = list(marker = list(enabled = FALSE)))
 ```
 
@@ -380,31 +397,41 @@ Vậy để *train data*, mình sẽ chia bộ dữ liệu thành 3 phần:
 ```{r}
 #| warning: false
 #| message: false
-library(keras)
-library(tensorflow)
-library(dplyr)
+sales_data <- data.frame(
+  Date = dates,
+  Weekday = weekdays,
+  Product_A = product_a_sales,
+  Product_B = product_b_sales,
+  Product_C = product_c_sales
+)
 
-# Function to create supervised learning format from time series
-create_supervised_data <- function(series, n_in = 1, n_out = 1) {
+# Convert the sales data to a time series (ts) object for Product A
+time_series_data <- scale(ts(sales_data$Product_A, start = c(2024, 5), 
+                   frequency = 365))
+                   
+
+create_supervised_data <- function(series, n) {
   series <- as.vector(series)  # Convert time series object to vector
-  data <- data.frame(series)
+  data <- data.frame(series)    # Initialize data frame with the original series
   
-  # Use base R lag function for ts objects (lag() from stats package)
-  for (i in 1:n_in) {
-    data <- cbind(data, stats::lag(series, -i))
+  # Create lag columns
+  for (i in 1:n) {
+    lagged_column <- lag(series, i)  # Get lagged values
+    data <- cbind(data, lagged_column)  # Add lagged column to the data
   }
   
-  colnames(data) <- c(paste0('t-', 1:n_in), 't+1')  # Correctly name columns
+  # Name the columns properly
+  colnames(data) <- c(paste0('t-', n:1), 't+1')
+  
+  # Remove rows with NA values (those at the start of the series due to lagging)
+  data <- na.omit(data)
+  
   return(data)
 }
 
 # Prepare the data with 12 input lags and 1 output (next time step)
 supervised_data <- create_supervised_data(time_series_data,
-                                          n_in = 12, 
-                                          n_out = 1)
-
-# Remove NA rows created by lag function
-supervised_data <- na.omit(supervised_data)
+                                          n = 50)
 
 # Step 2: Split data into training and test sets
 train_size <- round(0.7 * nrow(supervised_data))   # 70% for training
@@ -416,15 +443,14 @@ val_data <- supervised_data[(train_size + 1):(train_size + val_size), ]
 test_data <- supervised_data[(train_size + val_size + 1):nrow(supervised_data), ]
 
 # Correct column selection
-x_train <- as.matrix(train_data[, 1:12])  # Input features (12 lags)
+x_train <- as.matrix(train_data[, 1:50])  # Input features (12 lags)
 y_train <- as.matrix(train_data[, 't+1'])  # Target output (next time step)
 
-x_val <- as.matrix(val_data[, 1:12])  # Input features for validation
+x_val <- as.matrix(val_data[, 1:50])  # Input features for validation
 y_val <- as.matrix(val_data[, 't+1'])  # Actual output for validation
 
-x_test <- as.matrix(test_data[, 1:12])  # Input features for testing
+x_test <- as.matrix(test_data[, 1:50])  # Input features for testing
 y_test <- as.matrix(test_data[, 't+1'])  # Actual output for testing
-
 
 ## Plot the result:
 library(xts)
@@ -432,11 +458,11 @@ n<-quantile(sales_data$Date,
             probs = c(0, 0.7, 0.8,1), 
             type = 1)
 
-m1<-sales_data %>% 
+m1<-sales_data |> 
   filter(Date <= n[[2]])
-m2<-sales_data %>% 
+m2<-sales_data |> 
   filter(Date <= n[[3]] & Date > n[[2]])
-m3<-sales_data %>% 
+m3<-sales_data |> 
   filter(Date <= n[[4]] & Date > n[[3]])
 
 demand_training<-xts(x=m1$Product_A,
@@ -452,11 +478,11 @@ lines<-cbind(demand_training,
              demand_forecasting)
 dygraph(lines,
         main = "Training and testing data", 
-        ylab = "Quantity order (Unit: Millions)") %>% 
-  dySeries("demand_training", label = "Training data") %>%
-  dySeries("demand_testing", label = "Testing data") %>%
-  dySeries("demand_forecasting", label = "Forecasting data") %>%
-  dyOptions(fillGraph = TRUE, fillAlpha = 0.4) %>% 
+        ylab = "Quantity order (Unit: Millions)") |> 
+  dySeries("demand_training", label = "Training data") |>
+  dySeries("demand_testing", label = "Testing data") |>
+  dySeries("demand_forecasting", label = "Forecasting data") |>
+  dyOptions(fillGraph = TRUE, fillAlpha = 0.4) |> 
   dyRangeSelector(height = 20)
 ```
 
@@ -471,41 +497,45 @@ Sau đó, ta sẽ bắt đầu *train model* bằng cách tạo thêm 12 cột g
 -   *Output*: dùng hàm `layer_dense(x, units = 1)` để định nghĩa là đầu ra chỉ có 1 giá trị.
 
 ```{r}
-# Step 3: Build a simple transformer-like model
-RNN_model <- function(input_shape) {
-  inputs <- layer_input(shape = input_shape)
-
-  # Transformer Encoder Layer (simplified)
-  x <- inputs
-  x <- layer_dense(x, units = 64, activation = 'relu')  # Dense layer
-  x <- layer_dense(x, units = 32, activation = 'relu')  # Another dense layer
-
-  # Output layer
-  x <- layer_dense(x, units = 1)
-  
-  model <- keras_model(inputs, x)
-  return(model)
-}
-
-# Example input shape (12 time steps input per sample)
-input_shape <- c(12)
-
-RNN_model <- RNN_model(input_shape)
-```
-
-```{r}
 #| warning: false
 #| message: false
 #| include: false
-# Step 4: Compile the model
-RNN_model %>% compile(
+use_python("C:/Users/locca/AppData/Local/Programs/Python/Python310/python.exe", required = TRUE)
+# Define a function to build the RNN model with Simple RNN
+RNN_model <- function(input_shape) {
+  inputs <- layer_input(shape = input_shape)
+  
+  # Simple RNN layer
+  x <- inputs
+  x <- layer_simple_rnn(x, units = 64, activation = 'tanh', return_sequences = TRUE)  # First RNN layer
+  x <- layer_simple_rnn(x, units = 128, activation = 'tanh')  # Second RNN layer
+  
+  # Dense layers after RNN layers
+  x <- layer_dense(x, units = 128, activation = 'relu')  # Dense layer
+  x <- layer_dense(x, units = 64, activation = 'relu')   # Another dense layer
+  
+  # Output layer (for regression)
+  x <- layer_dense(x, units = 1)  # Single output (next time step value)
+  
+  model <- keras_model(inputs, x)
+  
+  return(model)
+}
+
+
+# Example input shape (12 time steps input per sample)
+input_shape <- c(50,1)
+
+RNN_model <- RNN_model(input_shape)
+
+RNN_model |> compile(
   loss = 'mse',
   optimizer = optimizer_adam(),
   metrics = c('mae')
 )
 
 # Step 5: Train the model
-RNN_history <- RNN_model %>% fit(
+RNN_history <- RNN_model |> fit(
   x_train, 
   y_train,
   epochs = 50, 
@@ -513,7 +543,7 @@ RNN_history <- RNN_model %>% fit(
   validation_data = list(x_val, y_val)
 )
 
-RNN_result <- RNN_model %>% 
+RNN_result <- RNN_model |> 
     evaluate(x_test, y_test)
 ```
 
@@ -531,27 +561,26 @@ $$
 
 Vậy khi chạy code, R sẽ return output như biểu đồ dưới đây là so sánh tham số của *mse* và *mae* giữa *training data* và *evaluating data*. Ý tưởng là đánh giá thử mô hình có dự đoán tốt không khi có dữ liệu mới vào.
 
-Tiếp theo, ta sẽ dùng *test data* để đánh giá mô hình vừa xây dựng. Kết quả có vẻ khá tuyệt vì mô hình gần như theo sát được dữ liệu của *test data*.
+Tiếp theo, ta sẽ dùng *test data* để đánh giá mô hình vừa xây dựng. Kết quả có vẻ khá ổn vì mô hình gần như theo sát được dữ liệu của *test data*.
 
 ```{r}
 # Step 6: Make predictions
-RNN_forecast <- RNN_model %>% 
+RNN_forecast <- RNN_model |> 
   predict(x_test)
 
 # Step 7: Combine predicted and observed
 plot_data <- data.frame(
-  time = c(min(m3$Date)-days(1),m3$Date),  # Time for the test set
   actual = y_test,  # Actual values from the test set
   forecast = RNN_forecast  # Forecasted values
 )
 
 # Step 8: Plot using Highcharts
-highchart() %>%
-  hc_title(text = "Time Series Forecasting with Highcharts") %>%
+highchart() |>
+  hc_title(text = "Time Series Forecasting with Highcharts") |>
   hc_xAxis(
     categories = plot_data$time,
     title = list(text = "Time")
-  ) %>%
+  ) |>
   hc_yAxis(
     title = list(text = "Value"),
     plotLines = list(list(
@@ -559,23 +588,23 @@ highchart() %>%
       width = 1,
       color = "gray"
     ))
-  ) %>%
+  ) |>
   hc_add_series(
     name = "Actual Data",
     data = plot_data$actual,
     type = "line",
     color = "#1f77b4"  # Blue color for actual data
-  ) %>%
+  ) |>
   hc_add_series(
     name = "Forecast",
     data = plot_data$forecast,
     type = "line",
     color = "#ff7f0e"  # Orange color for forecast data
-  ) %>%
+  ) |>
   hc_tooltip(
     shared = TRUE,
     crosshairs = TRUE
-  ) %>%
+  ) |>
   hc_legend(
     enabled = TRUE
   )
@@ -595,54 +624,52 @@ Tiếp theo, ta sẽ xây dựng thử mô hình *LSTM*. Mô hình LSTM thườn
 #| warning: false
 #| message: false
 #| include: false
-# Step 3: Build an enhanced LSTM model
-LSTM_model <- function(input_shape) {
-  # Define input layer
-  inputs <- layer_input(shape = input_shape)
-  
-  # First LSTM layer (returns the full sequence for the next layer)
-  x <- layer_lstm(units = 50, return_sequences = TRUE, activation = 'tanh')(inputs)
-  
-  # Second LSTM layer (returns the full sequence, could also be 'return_sequences = FALSE' for output prediction)
-  x <- layer_lstm(units = 50, return_sequences = FALSE, activation = 'tanh')(x)
-  
-  # Output layer (prediction for the next time step)
-  outputs <- layer_dense(units = 1)(x)
-  
-  # Create the model
-  model <- keras_model(inputs, outputs)
-  
-  # Return the model
-  return(model)
-}
+# Load necessary libraries
+LSTM_model <- keras_model_sequential() %>%
+  layer_lstm(units = 64, 
+             input_shape = c(50, 1), 
+             return_sequences = TRUE) %>%
+  layer_dropout(rate = 0.3) %>%
+  layer_lstm(units = 32, return_sequences = FALSE) %>%
+  layer_dropout(rate = 0.3) %>%
+  layer_dense(units = 32) %>%
+  layer_dropout(rate = 0.2) %>%
+  layer_dense(units = 1)
+
+early_stop <- callback_early_stopping(monitor = "val_loss", patience = 10, restore_best_weights = TRUE)
+
+model_checkpoint <- callback_model_checkpoint("best_model.keras", save_best_only = TRUE)
 
 
-# Update input shape for LSTM (timesteps = 12, features = 1)
-input_shape <- c(12, 1)
+lr_scheduler <- callback_learning_rate_scheduler(function(epoch, lr) {
+  if (epoch > 10) {
+    return(lr * 0.5)  # Reduce learning rate after epoch 10
+  }
+  return(lr)
+})
 
-# Reshape the input data for LSTM (add a feature dimension)
-x_train <- array_reshape(x_train, dim = c(nrow(x_train), 12, 1))
-x_test <- array_reshape(x_test, dim = c(nrow(x_test), 12, 1))
-x_val <- array_reshape(x_val, dim = c(nrow(x_val), 12, 1))
-
-# Build the enhanced LSTM model
-LSTM_model <- LSTM_model(input_shape)
-
-# Step 4: Compile the model
-LSTM_model %>% compile(
+LSTM_model |> compile(
   loss = 'mse',
-  optimizer = optimizer_adam(),
+  optimizer = optimizer_adam(learning_rate = 0.001),
   metrics = c('mae')
 )
 
-# Step 5: Train the model
-LSTM_history <- LSTM_model %>% fit(
-  x_train, y_train,
-  epochs = 50, batch_size = 32,
-  validation_data = list(x_val, y_val)
-)
+# Reshape the input data for LSTM (add a feature dimension)
+x_train <- array_reshape(x_train, dim = c(nrow(x_train), 50, 1))
+x_test <- array_reshape(x_test, dim = c(nrow(x_test), 50, 1))
+x_val <- array_reshape(x_val, dim = c(nrow(x_val), 50, 1))
 
-LSTM_result <- LSTM_model %>% 
+
+LSTM_model %>%
+  fit(x_train, 
+      y_train, 
+      epochs = 100, 
+      batch_size = 32, 
+      validation_data = list(x_val, y_val),
+      callbacks = list(early_stop, model_checkpoint, lr_scheduler))
+
+
+LSTM_result <- LSTM_model |> 
     evaluate(x_test, y_test)
 ```
 
@@ -654,28 +681,27 @@ Vậy giờ ta sẽ so sánh với mô hình *RNN* trước với mô hình *LST
 # Extract metrics into a data frame
 results_df <- data.frame(
   Model = c("RNN", "LSTM"),
-  Metric = c("Loss", "metric"),
   MSE = c(RNN_result[[1]],RNN_result[[2]]),
   MAE = c(LSTM_result[[1]], LSTM_result[[2]])
 )
 
 library(gt)
 # Create a gt table
-results_df %>%
-  gt() %>%
+results_df |>
+  gt() |>
   tab_header(
     title = "Model Performance Metrics",
     subtitle = "Comparison of MSE and MAE for RNN and LSTM"
-  ) %>%
+  ) |>
   fmt_number(
     columns = vars(MSE, MAE),
-    decimals = 4
-  ) %>%
+    decimals = 6
+  ) |>
   cols_label(
     Model = "Model Type",
     MSE = "Mean Squared Error",
     MAE = "Mean Absolute Error"
-  ) %>%
+  ) |>
   tab_options(
     table.font.size = 14,
     heading.title.font.size = 16,
@@ -683,43 +709,47 @@ results_df %>%
   )
 ```
 
-Kết quả cho thấy mô hình *RNN* truyền thống đưa ra kết quả tốt hơn *LSTM* mặc dù sai số của *LSTM* đều \< 0.03 là không quá tệ nhưng tiêu chí vẫn là mô hình nào hiệu quả nhất.
+Kết quả cho thấy mô hình *LSTM* đưa ra kết quả tốt hơn *RNN* với độ sai số thấp hơn nhưng nếu bạn để ý thì thấy trong biểu đồ mình vẫn để % âm để dễ phân biệt giữa việc *outstock* và *high inventory* (bởi vì bạn đang dự báo cho nhu cầu của khách hàng). Bạn có thể so sánh thêm 1 bước nữa về tổng chi phí giữa 2 mô hình về *outstock* và *holding cost* để có cái nhìn tổng quan nhất.
 
 ```{r}
-LSTM_forecast <- LSTM_model %>% 
+LSTM_forecast <- LSTM_model |> 
   predict(x_test)
 
-compare<-data.frame(Date = c(min(m3$Date)-days(1),m3$Date),
-                    LSTM = round(LSTM_forecast - y_test,3),
-                    RNN = round(RNN_forecast - y_test,3)
+compare<-data.frame(Date = 1:length(y_test),
+                    LSTM = round((LSTM_forecast - y_test)/y_test,3),
+                    RNN = round((RNN_forecast - y_test)/y_test,3)
 )
 
-# Create the highchart plot
-highchart() %>%
-  hc_chart(type = "line") %>%
-  hc_title(text = "Residual Comparison: LSTM vs RNN") %>%
+# Create the highchart plot with percentage formatting for y-axis
+highchart() |>
+  hc_chart(type = "line") |>
+  hc_title(text = "Residual Comparison: LSTM vs RNN") |>
   hc_xAxis(
     categories = compare$Date,
     title = list(text = "Date")
-  ) %>%
+  ) |>
   hc_yAxis(
     title = list(text = "Residuals"),
+    labels = list(
+      formatter = JS("function() { return (this.value).toFixed(0) + '%'; }")  # Format labels as percentages
+    ),
     plotLines = list(
       list(value = 0, color = "gray", width = 1, dashStyle = "Dash")
     )
-  ) %>%
+  ) |>
   hc_add_series(
     name = "LSTM Residuals",
     data = compare$LSTM,
     color = "#1f77b4"
-  ) %>%
+  ) |>
   hc_add_series(
     name = "RNN Residuals",
     data = compare$RNN,
     color = "#ff7f0e"
-  ) %>%
-  hc_tooltip(shared = TRUE) %>%
+  ) |>
+  hc_tooltip(shared = TRUE) |>
   hc_legend(enabled = TRUE)
+
 ```
 
 ### Xác định cấu trúc mô hình:
@@ -728,7 +758,9 @@ Nếu bạn để ý, thực chất code cho mô hình cho như mình đã trìn
 
 Vậy quy tắc xác định mô hình là như thế nào ? Câu trả lời là **không có quy tắc nào cả** và chỉ có các tips mà mình lụm nhặt trên mạng như sau:
 
--   *Number of layer* nên nằm giữa số input và số output. Như bài thực hành trên thì số *layer* nên nằm trong khoảng (1,12). Hoặc bạn có thể sử dụng hàm dưới đây để xác định.
+#### Number of layer:
+
+Số *layer* nên nằm giữa số input và số output. Như bài thực hành trên thì số *layer* nên nằm trong khoảng (1,12). Hoặc bạn có thể sử dụng hàm dưới đây để xác định.
 
 $$
 N_h = \frac{N_s}{\alpha \cdot (N_i + N_o)}
@@ -746,15 +778,50 @@ Với các tham số gồm:
 
 5.  $N_o$ là số lượng nơ-ron output.
 
-- Các hàm *acvtivation* như **Tanh** thì phù hợp cho dự báo giá trị liên tục từ dữ liệu chuỗi, **ReLU** giúp cho quá trình training nhanh hơn và không gây ra *vanishing problem* do không bị chặn, **Softmax** thường dùng ở *final layer* cho bài toán classification, **Sigmoid** thường dùng cho hồi quy logic.
+Ví dụ như ở mô hình trên thì số *hidden layer* sẽ khoảng 1-4 layer là ổn (Như trên thì mình dùng 1 layer cho mô hình RNN, 2 layer cho mô hình LSTM)
 
-- *Number of neurons*: Số lượng nơ-ron trong một lớp quyết định lượng thông tin mà mạng có thể lưu trữ. Nhiều nơ-ron giúp mạng học được các mẫu phức tạp hơn, nhưng cũng làm tăng nguy cơ overfitting (quá khớp) và yêu cầu nhiều tài nguyên tính toán hơn. Bạn có thể bắt đầu với một số lượng nơ-ron tương đối nhỏ, như 128 hoặc 256...
+#### Choose acvtivation function:
+
+Các hàm *activation* dùng để tính *weighted sum* và mỗi *layer* sẽ cần có 1 hoặc nhiều hàm để tính. Việc lựa chọn hàm ảnh hưởng lớn đến *performance* của mô hình, thường sẽ được chia thành 3 phần là:
+
+1.  *Activation for input layer*: thường ko dùng hàm gì cả. Bạn chỉ thực hiện *processing* dữ liệu để training.
+
+2.  *Activation for Hidden Layers*:
+
+Thông thường, hàm **Tanh** thì phù hợp cho dự báo giá trị liên tục từ dữ liệu chuỗi, **ReLU** giúp cho quá trình training nhanh hơn và không gây ra *vanishing problem* do không bị chặn, **Softmax** thường dùng ở *output layer* cho bài toán classification, **Sigmoid** thường dùng cho hồi quy logic. Ngoài ra, cách đơn giản hơn là tùy vào loại mô hình bạn đang xây dựng để lựa chọn, ví dụ như tips dưới đây mình tìm hiểu được:
+
+```{=html}
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/choose.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 4: Tips chọn hàm activation cho hidden layer 
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://machinelearningmastery.com/choose-an-activation-function-for-deep-learning/" target="_blank">Link to Image</a>
+  </div>
+</div>
+```
+3.  *Activation for Output Layers*:
+
+Đối với *output layer*, bạn sẽ lựa chọn hàm dựa trên *class* của output mà bạn đang hướng đến. Các hàm thông thường sẽ gồm:
+
+-   **Linear**: hay còn gọi là “identity” (nhân với 1.0) hoặc “no activation” bởi vì hàm *linear* tuyến tính không thay đổi *weighted sum* của input theo bất kỳ cách nào và thay vào đó trả về giá trị trực tiếp. Hàm này thường dùng cho output dạng liên tục.
+
+-   **Logistic (Sigmoid)**: áp dụng cho output dạng \[0,1\] hay còn gọi là *binary classification* (ví dụ mô hình nhằm đưa ra quyết định có/không trong việc đầu tư vào cổ phiểu này chẳng hạn).
+
+-   **Softmax**: Hàm này sẽ chuyển đổi một vector thành các giá trị xác suất có tổng bằng 1 (Nó giống như tìm hàm mật độ (PDF) cho một biến). Ứng dụng để dán nhãn cho *multiclass* thay vì 2 class như hàm *sigmoid* bên trên. Mỗi nhãn sẽ có 1 giá trị xác suất và dựa vào đó dự đoán khả năng xảy ra của từng class.
+
+#### Number of neurons:
+
+Số lượng nơ-ron trong một lớp quyết định lượng thông tin mà mạng có thể lưu trữ. Nhiều nơ-ron giúp mạng học được các mẫu phức tạp hơn, nhưng cũng làm tăng nguy cơ overfitting (quá khớp) và yêu cầu nhiều tài nguyên tính toán hơn. Bạn có thể bắt đầu với một số lượng nơ-ron tương đối nhỏ, như 128 hoặc 256...
 
 ## Kết luận:
 
-Như vậy, chúng ta đã được học về mô hình *RNN* và *LSTM* và cách xây dựng chúng trong R.
-
-Nếu bạn có câu hỏi hay thắc mắc nào, đừng ngần ngại liên hệ với mình qua Gmail. Bên cạnh đó, nếu bạn muốn xem lại các bài viết trước đây của mình, hãy nhấn vào hai nút dưới đây để truy cập trang **Rpubs** hoặc mã nguồn trên **Github**. Rất vui được đồng hành cùng bạn, hẹn gặp lại! 😄😄😄
+Như vậy, chúng ta đã được học về mô hình *RNN* và *LSTM* và cách xây dựng chúng trong R. Tiếp theo, ta sẽ học tiếp về mô hình *Transformer*
 
 ```{=html}
 <!DOCTYPE html>
@@ -762,68 +829,110 @@ Nếu bạn có câu hỏi hay thắc mắc nào, đừng ngần ngại liên h�
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Me</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-icons@v6.0.0/svgs/rstudio.svg">
+    <title>Go to Next Page</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: $secondary-color; }
-        .container { max-width: 400px; margin: auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); }
-        label { display: block; margin: 10px 0 5px; }
-        input[type="email"] { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; }
-        .github-button, .rpubs-button { margin-top: 20px; text-align: center; }
-        .github-button button, .rpubs-button button { background-color: #333; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 4px; width: 100%; }
-        .github-button button:hover, .rpubs-button button:hover { background-color: #555; }
-        .rpubs-button button { background-color: #75AADB; }
-        .rpubs-button button:hover { background-color: #5A9BC2; }
-        .rpubs-icon { margin-right: 5px; width: 20px; vertical-align: middle; filter: brightness(0) invert(1); }
-        .error-message { color: red; font-size: 0.9em; margin-top: 5px; }
+        /* Global Styles */
+        body {
+            font-family: 'Tahoma', sans-serif;
+            display: flex;
+            flex-direction: column;  /* Stack content and footnote vertically */
+            justify-content: center;  /* Center content vertically */
+            align-items: center;      /* Center content horizontally */
+            margin: 0;
+            background-color: $secondary-color;
+            box-sizing: border-box;
+            min-height: 80vh; /* Adjusted to 80vh to ensure it's not too high */
+        }
+
+        /* Container Styling (Main Content) */
+        .container {
+            text-align: center;
+            padding: 20px 40px; /* Adjust padding for more compactness */
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            width: auto;  /* Auto width to fit content */
+            max-width: 380px;  /* Adjusted max-width for a smaller container */
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 20px;  /* Space from the top of the page */
+        }
+
+        /* Link Styling */
+        .link {
+            font-size: 20px;  /* Adjusted font size for readability */
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 12px 30px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .link:hover {
+            color: #0056b3;
+            text-decoration: none;
+            background-color: #e6f0ff;
+        }
+
+        /* Arrow Styling */
+        .arrow {
+            margin-left: 12px;
+            font-size: 24px;
+            transition: transform 0.3s ease, font-size 0.3s ease;
+        }
+
+        .link:hover .arrow {
+            transform: translateX(8px);
+            font-size: 26px;
+        }
+
+        /* Focus State for Accessibility */
+        .link:focus {
+            outline: 2px solid #0056b3;
+        }
+
+        /* Footer Styling (Footnote) */
+        .footer {
+            font-size: 14px;
+            color: #777;
+            margin-top: 20px;  /* Space between content and footnote */
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Mobile-Friendly Adjustments */
+        @media (max-width: 600px) {
+            .link {
+                font-size: 18px;
+                padding: 8px 15px;  /* Smaller padding for mobile devices */
+            }
+
+            .arrow {
+                font-size: 18px;
+                margin-left: 8px;
+            }
+
+            .container {
+                padding: 15px 30px;  /* Smaller padding on mobile */
+                max-width: 90%;  /* Ensure container fits better on small screens */
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Contact Me</h2>
-        <form id="emailForm">
-            <label for="email">Your Email:</label>
-            <input type="email" id="email" name="email" required aria-label="Email Address">
-            <div class="error-message" id="error-message" style="display: none;">Please enter a valid email address.</div>
-            <button type="submit">Send Email</button>
-        </form>
-        <div class="github-button">
-            <button>
-                <a href="https://github.com/Loccx78vn/RNN_model" target="_blank" style="color: white; text-decoration: none;">
-                    <i class="fab fa-github"></i> View Code on GitHub
-                </a>
-            </button>
-        </div>
-        <div class="rpubs-button">
-            <button>
-                <a href="https://rpubs.com/loccx" target="_blank" style="color: white; text-decoration: none;">
-                    <img src="https://cdn.jsdelivr.net/npm/simple-icons@v6.0.0/icons/rstudio.svg" alt="RStudio icon" class="rpubs-icon"> Visit my RPubs
-                </a>
-            </button>
-        </div>
+        <a href="https://loccx78vn.github.io/RNN_model/transfer.html" class="link" tabindex="0">
+            Go to Next Page
+            <span class="arrow">➔</span>
+        </a>
     </div>
-
-    <script>
-        document.getElementById('emailForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
-            const emailInput = document.getElementById('email');
-            const email = emailInput.value;
-            const errorMessage = document.getElementById('error-message');
-
-            // Simple email validation regex
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-            if (emailPattern.test(email)) {
-                errorMessage.style.display = 'none'; // Hide error message
-                const yourEmail = 'loccaoxuan103@gmail.com'; // Your email
-                const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${yourEmail}&su=Help%20Request%20from%20${encodeURIComponent(email)}`;
-                window.open(gmailLink, '_blank'); // Open in new tab
-            } else {
-                errorMessage.style.display = 'block'; // Show error message
-            }
-        });
-    </script>
 </body>
 </html>
 ```
