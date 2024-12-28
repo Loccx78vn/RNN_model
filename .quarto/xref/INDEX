@@ -4,5 +4,11 @@
   },
   "torch.qmd": {
     "torch.html": "959c7ed7"
+  },
+  "transfer.qmd": {
+    "transfer.html": "257d3eb2"
+  },
+  "practice.qmd": {
+    "practice.html": "f18e4499"
   }
 }

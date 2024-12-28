@@ -1,0 +1,516 @@
+---
+title: "Mô hình Transformer"
+subtitle: "Việt Nam, 2024"
+categories: ["Transfer model", "Forecasting"]
+format: 
+  html:
+     code-tools: true
+     code-fold: true
+number-sections: true
+bibliography: references.bib
+---
+
+Trong một nghiên cứu của [@jimengshi2022] về việc ứng dụng hàng loạt các mô hình thuộc phân lớp **Deep learning** và so sánh để chọn ra mô hình dự đoán tốt nhất chỉ số *PM2.5* (là chỉ số đo lường lượng hạt bụi li ti có trong không khí với kích thước 2,5 micron trở xuống). Kết quả có bao gồm: "Mô hình *Transformer* dự đoán tốt nhất cho dự đoán *long-term* trong tương lai. LSTM và GRU vượt trội hơn RNN cho các dự đoán *short-term*."
+
+Vậy mô hình *Transformer* là gì ? Chúng ta sẽ học nó ở bài này.
+
+## Mô hình Transformer:
+
+### Giới thiệu:
+
+```{r}
+pacman::p_load(torch,
+               dplyr,
+               tidyverse)
+```
+
+Chắc các bạn đã quá quen thuộc với *Chatgpt* - một công cụ AI mạnh mẽ trong thời gian gần đây với lượng người sử dụng cực kì cao. Như biểu đồ dưới đây, từ khi launched *Chatgpt* chỉ tốn 5 ngày để đạt 1 triệu người sử dụng và ngoài ra theo thống kê đến tháng 2/2024, *Chatgpt* đã có tới 1.6 tỉ lượt thăm quan.
+
+```{=html}
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/chatgpt.jpg" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 1: Thời gian để đạt 1 triệu người dùng của Chatgpt
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://wisernotify.com/blog/chatgpt-users/">Link to Image</a>
+  </div>
+</div>
+```
+
+Ý tưởng ban đầu của *Chatgpt* chính là dựa trên cấu trúc mô hình *Transformer* - 1 dạng *Deep learning* chỉ mới được giới thiệu với thế giới từ năm 2017 nhưng có sức ảnh hưởng rất lớn, nhất là trong lĩnh vực *Generative AI*.
+
+Khái niệm về mô hình này được giới thiệu lần đầu vào năm 2017 của các nhà nghiên cứu của Google trong bài tài liệu [Attention is all you need](https://arxiv.org/pdf/1706.03762). Mô hình này dựa trên ý tưởng là xác định các thành phần quan trọng trong *sequence* và cho phép mô hình đưa ra quyết định dựa trên sự phụ thuộc giữa các phần tử trong đầu vào, bất kể khoảng cách của chúng với nhau, quá trình này gọi là *Attention mechanisms*. Dựa vào đó, mô hình *Transformer* sẽ chuyển đổi một chuỗi input thành 1 chuỗi output khác nhưng vẫn đảm bảo giữ lại các đặc điểm quan trọng của *sequence* đó.
+
+```{=html}
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/input_output.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 2: Input và output của mô hình
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://www.datacamp.com/tutorial/how-transformers-work">Link to Image</a>
+  </div>
+</div>
+```
+
+Ví dụ với việc dịch thuật văn bản sẽ có những từ trong câu, câu trong đoạn văn đại diện cho ý nghĩa toàn câu, toàn đoạn văn. Hay với về việc phân tích *demand* trong *time series*, lượng mua hàng vào những ngày nghỉ, cuối tuần sẽ đưa ra *insight* tốt hơn vào các ngày bình thường. Như vậy, bạn thấy đó, mô hình *Transformer* phù hợp với các *task* thuộc dạng dịch văn bản, dự đoán chuỗi hành động liên tiếp của đối tượng,...
+
+### So sánh với RNN, LSTM:
+
+Như hình trên, bạn có thể thấy mô hình *Transformer* cũng gồm *Encoder* và *Decoder* giống như cách hoạt động của *RNN*, *LSTM*. Nhưng khác nhau ở chỗ, thay vì cơ chế đó hoạt động ở từng timestep liên tục nhau như *RNN* thì ở *Transformer* input được đẩy vào cùng 1 lúc (nghĩa là không còn học theo từng timestep nữa). Nhờ vậy, *Transformer* sẽ xác định được các thành phần quan trọng trong sequence và lựa chọn thông số cho chúng (Hiểu đơn giản như việc bạn cần nghe hết đoạn thoại của người đối diện thì mới hiểu được họ đang nói gì và chọn lọc các *keyword* để xác định ý chính của đoạn văn đó và đó là ý tưởng chính xây dựng lên mô hình này).
+
+```{=html}
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/transformer_vs_lstm.jpg" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 3: So sánh performance giữa mô hình Transformer và LSTM
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://www.mdpi.com/2079-9292/11/11/1785">Link to Image</a>
+  </div>
+</div>
+```
+
+Ngoài ra, chính cơ chế *Self-attention* đã tạo sự khác biệt lớn cho mô hình *Transformer* so với các mô hình khác. Như hình dưới đây là nghiên cứu của về việc ứng dụng *Deep learning* để tạo phụ đề cho video. Nghiên cứu đã so sánh performance giữa 2 mô hình (i) Transformer-based model và (ii) LSTM-based model khi *hyperparamater tuning*. Kết quả cho thấy sự vượt trội của *Transformer* khi chỉ số *accuracy* lên tới 97%.
+
+Tiếp theo, chúng ta sẽ tìm hiểu về các thành phần chính trong mô hình *Transformer*.
+
+## Các thành phần cơ bản trong Transformer:
+
+Về nguyên lí hoạt động, mình sẽ chia thành các phần như sau theo cách giải thích cá nhân để giúp mọi người dễ hiểu:
+
+-   **Thành phần 1: Tensor**
+
+Đầu tiên, các bạn phải hiểu về *tensor* là gì? Thì nó là một đối tượng toán học nhằm tổng hợp hóa 1 hoặc nhiều chiều trong 1 object. Dạng đơn giản của *tensor* như là *scalar* (số đơn giản), *vector* (chuỗi các số),... 
+
+```{=html}
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/tensor.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 4: Tensor là gì
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://nttuan8.com/bai-1-tensor/">Link to Image</a>
+  </div>
+</div>
+```
+
+Và mục đích của việc chuyển đổi dữ liệu sang dạng *tensor* là để giúp cho việc tính toán trên GPU nhanh hơn và tăng tốc độ training machine learning model. Ngoài ra, vẫn có các thông tin khác hay về *tensor* trong **R**, bạn có thể kham khảo link này: [Tensors](https://skeydan.github.io/Deep-Learning-and-Scientific-Computing-with-R-torch/tensors.html).
+ 
+-   **Thành phần 2: Embedding và positional encoding**
+
+Khi dữ liệu được đưa vào, nó sẽ trải qua bước *embedding* (cách để biểu diễn dữ liệu đa chiều trong không gian ít chiều). Nếu dữ liệu của bạn dạng hình ảnh hoặc dạng văn bản thì bước này rất cần thiết (vì các mô hình machine learning chỉ làm việc được với dữ liệu dạng số).
+
+Ngoài ra, vì mô hình *Transformer* không có khả năng xử lý dữ liệu theo thứ tự tuần tự (khác với *RNN* hoặc *LSTM*), nó sẽ cần một chỉ báo để chỉ ra thứ tự của các bước trong chuỗi, gọi là *Postitional encoding*. Bạn có thể kham khảo bài viết của [Mehreen Saeed](https://machinelearningmastery.com/a-gentle-introduction-to-positional-encoding-in-transformer-models-part-1/). Và code trong R sẽ ví dự như sau:
+
+```{r}
+#| echo: true
+positional_encoding <- function(seq_len, d, n = 10000) {
+  P <- matrix(0, nrow = seq_len, ncol = d)
+  
+  for (k in 1:seq_len) {
+    for (i in 0:(d / 2 - 1)) {
+      denominator <- n^(2 * i / d)
+      P[k, 2 * i + 1] <- sin(k / denominator)
+      P[k, 2 * i + 2] <- cos(k / denominator)
+    }
+  }
+  
+  return(P)
+}
+```
+
+-   **Thành phần 3: Self-attention mechanism** 
+
+Đây là một cơ chế đặc biệt của Transformer, cho phép mô hình chú ý đến tất cả các bước thời gian trước đó trong chuỗi tại mỗi bước. Điều này giúp mô hình nắm bắt được các *mối quan hệ dài hạn* và sự liên hệ giữa các bước thời gian với nhau (giúp tránh gặp vấn đề ghi nhớ ngắn hạn như *RNN*). Bạn có thể xem *Self-attention* như là cấu trúc chung nhất, còn khi xây dựng mô hình người ta có thể biến tấu tùy vào nhu cầu. 
+
+Như ở *Encoder* thì sử dụng *Multi-Head Attention* có thể tính toán chú ý nhiều lần song song (khác với *self -attention* chỉ tính toán cho *single sequence*) . Mỗi "đầu" có thể chú ý đến những khía cạnh khác nhau của các mối quan hệ thời gian trong chuỗi. Ví dụ, một đầu có thể chú ý đến các mẫu ngắn hạn (ví dụ: sự dao động hàng ngày), trong khi một đầu khác có thể nắm bắt các xu hướng dài hạn (ví dụ: chu kỳ mùa). Trong R thì đã có sẵn hàm `nn_multihead_attention()` trong package `torch`.
+
+Còn đối với *Decoder* thì dùng *Masked Multi-Head Attention* để đảm bảo rằng khi dự báo giá trị tiếp theo trong chuỗi thời gian, mô hình chỉ có thể chú ý đến các bước thời gian trước đó mà không nhìn vào các bước thời gian tương lai. So sánh với *Self-attention* thì bạn cần thêm bước *Masked score* thôi. Trong R sẽ được code như sau:
+
+:::: {.columns}
+
+::: {.column width="40%"}
+![](img/mask.png)
+:::
+
+::: {.column width="60%"}
+
+```{r}
+#| code-summary: "Show structure"
+mask_self_attention <- nn_module(
+  initialize = function(embed_dim, num_heads) {
+    self$embed_dim <- embed_dim
+    self$num_heads <- num_heads
+    self$head_dim <- embed_dim / num_heads
+
+    if (embed_dim %% num_heads != 0) {
+      stop("embed_dim must be divisible by num_heads")
+    }
+    
+    # Linear layers for Q, K, V 
+    self$query <- nn_linear(embed_dim, embed_dim, bias = FALSE)
+    self$key <- nn_linear(embed_dim, embed_dim, bias = FALSE)
+    self$value <- nn_linear(embed_dim, embed_dim, bias = FALSE)
+    
+    # Final linear layer after concatenating heads
+    self$out <- nn_linear(embed_dim, embed_dim, bias = FALSE)
+    
+  },
+  
+  forward = function(x) {
+    batch_size <- x$size(1)
+    seq_leng <- x$size(2)
+    
+    # Linear projections for Q, K, V
+    Q <- self$query(x)  # (batch_size, seq_leng, embed_dim)
+    K <- self$key(x)
+    V <- self$value(x)
+    
+    # Reshape to separate heads: (batch_size, num_heads, seq_leng, head_dim)
+    Q <- Q$view(c(batch_size, seq_leng, self$num_heads, self$head_dim))$transpose(2, 3)
+    K <- K$view(c(batch_size, seq_leng, self$num_heads, self$head_dim))$transpose(2, 3)
+    V <- V$view(c(batch_size, seq_leng, self$num_heads, self$head_dim))$transpose(2, 3)
+    
+    # Compute Matmul and scale:
+    d_k <- self$head_dim
+    attention_scores <- torch_matmul(Q, torch_transpose(K, -1, -2)) / sqrt(d_k)
+    
+    # Apply mask if provided
+    mask <- torch_tril(torch_ones(c(seq_leng, seq_leng)))
+    
+    if (!is.null(mask)) {
+      
+      masked_attention_scores <- attention_scores$masked_fill(mask == 0, -Inf)
+      
+    } else {
+      print("Warning: No mask provided")
+    }
+    
+    # Compute attention weights
+    weights <- nnf_softmax(masked_attention_scores, dim = -1)
+    
+    # Apply weights to V
+    attn_output <- torch_matmul(weights, V)  
+    
+    # Reshape again:
+    attn_output <- attn_output$transpose(2, 3)$contiguous()$view(c(batch_size, seq_leng, self$embed_dim))
+    
+    # Final linear layer
+    output <- self$out(attn_output)
+    return(output)
+  }
+)
+```
+
+:::
+
+::::
+
+Ngoài ra, trong *Decoder* còn có *Cross-attention* nhưng nó hơi phức tạp nên mình sẽ giới thiệu sau.
+
+-   **Thành phần 4: Sub-layer**
+
+Bạn sẽ để ý thấy các phép tính toán trong mô hình sẽ luôn kèm theo bộ phận **Add & Norm** để lưu giữ residual và cộng vào output được tạo sau khi kết thúc các phép tính đó. Việc này giúp giảm thiểu vấn đề *vanishing gradient* đã đề cập ở trang trước và giúp cho mô hình học sâu hơn. Trong R bạn chỉ cần thêm lớp này bằng hàm `nn_layer_norm()`.
+
+-   **Thành phần 5: Feed-Forward Neural Networks**
+
+Sau khi tính toán chú ý, đại diện của từng bước thời gian sẽ được đưa qua một mạng nơ-ron Feed-Forward (FFN), thường bao gồm: (i) Một phép biến đổi tuyến tính (lớp kết nối đầy đủ), (ii) Hàm kích hoạt ReLU và (iii) Một phép biến đổi tuyến tính nữa. Trong R sẽ code như này:
+
+```{r}
+#| echo: true
+#| eval: false
+feed_forward <- nn_sequential(
+      nn_linear(d_model, d_ff),
+      nn_relu(),
+      nn_linear(d_ff, d_model)
+    )
+```
+
+
+## Các thành phần chính:
+
+Sau khi hiểu rõ các thành phần cần thiết, ta sẽ ngó qua *workflow* đầy đủ của mô hình *Transformer*.Nếu bạn chưa hiểu thì có thể kham khảo link này [datacamp](https://www.datacamp.com/tutorial/how-transformers-work)
+
+```{=html}
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/workflow.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 6: Workflow của mô hình Transformer
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://arxiv.org/pdf/2204.11115">Link to Image</a>
+  </div>
+</div>
+```
+
+Mình sẽ trình bày theo cách cá nhân để giúp mọi người hiểu rõ hơn:
+
+- **Bước 1: Xử lí input**: sẽ gồm bước *Embedding* dữ liệu sau đó cộng thêm *Positional encoding*. Lưu ý: input cho *encoder* và *decoder* là khác nhau, *encoder* sẽ nhận đầu vào là các biến dự báo (ví dụ: giá trị lag của time series,...) và *decoder* sẽ nhận đầu vào là biến target (là kết quả bạn mong muốn mô hình dự báo đúng).
+
+- **Bước 2: Encoder output**: Khi dữ liệu đi vào *encoder block* thì sẽ trải qua *lớp *multi-head attention* và *feed forward* và các lớp sub-layer *normalization*. Lưu ý: khi normalizing thì phải normalize (kết quả từ lớp trước + input ban đầu), bạn có thể nhìn ảnh dưới đây để dễ hiểu hơn.
+
+```{=html}
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/normalize.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 7: Normalization và residual connection sau lớp Multi-Head Attention
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://www.datacamp.com/tutorial/how-transformers-work?utm_adgroupid=157156376071&utm_keyword=&utm_matchtype=&utm_network=g&utm_adpostion=&utm_targetid=aud-1685385913382:dsa-2218886984380&utm_loc_interest_ms=&utm_loc_physical_ms=9198559&utm_content=&gad_source=1">Link to Image</a>
+  </div>
+</div>
+```
+
+- **Bước 3: Add encoder output to decoder**: Sau khi *Decoder* thực hiện tính toán cho dữ liệu thông qua layer *Mask multi-head attention* và *Normalization* thì sẽ đến bước *Cross-attention* (Mặc dù ở hình trên hoặc các tài liệu khác mà bạn từng đọc sẽ để là layer *multi-head attention* nhưng thực chất layer *cross-attention* mới đúng).
+
+Vậy *cross-attention* có gì đặc biệt? Ta sẽ nhìn sơ qua cấu trúc của nó thì sẽ nhận ra điểm khác biệt so với *self-attention* thông thường là *cross-attention* sẽ nhận dữ liệu từ 2 nguồn: (i) output của encoder gán cho *Q* và (ii) input của decoder gán cho *V*, *K*.
+
+::: {.panel-tabset}
+
+## Cross attention:
+
+```{=html}
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/cross_attention.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 8: Workflow của Cross-attention
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://magazine.sebastianraschka.com/p/understanding-and-coding-self-attention">Link to Image</a>
+  </div>
+</div>
+```
+
+## Self attention:
+
+```{=html}
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/self_attention.png" style="max-width: 100%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 9: Workflow của Self-attention
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://magazine.sebastianraschka.com/p/understanding-and-coding-self-attention">Link to Image</a>
+  </div>
+</div>
+```
+
+:::
+
+Về code trong R sẽ như sau:
+
+```{r}
+#| code-summary: "Show structure"
+cross_attention <- nn_module(
+  initialize = function(embed_dim, num_heads) {
+    self$embed_dim <- embed_dim
+    self$num_heads <- num_heads
+    self$head_dim <- embed_dim / num_heads
+    
+    if (self$head_dim %% 1 != 0) {
+      stop("embed_dim must be divisible by num_heads")
+    }
+    
+    self$query <- nn_linear(embed_dim, embed_dim, bias = FALSE)
+    self$key <- nn_linear(embed_dim, embed_dim, bias = FALSE)
+    self$value <- nn_linear(embed_dim, embed_dim, bias = FALSE)
+    self$out <- nn_linear(embed_dim, embed_dim, bias = FALSE)
+  },
+  
+  forward = function(decoder_input, encoder_output, mask = NULL) {
+    batch_size <- decoder_input$size(1)
+    seq_leng_dec <- decoder_input$size(2)
+    seq_leng_enc <- encoder_output$size(2)
+    
+    Q <- self$query(decoder_input)
+    K <- self$key(encoder_output)
+    V <- self$value(encoder_output)
+    
+    Q <- Q$view(c(batch_size, seq_leng_dec, self$num_heads, self$head_dim))$transpose(2, 3)
+    K <- K$view(c(batch_size, seq_leng_enc, self$num_heads, self$head_dim))$transpose(2, 3)
+    V <- V$view(c(batch_size, seq_leng_enc, self$num_heads, self$head_dim))$transpose(2, 3)
+    
+    d_k <- self$head_dim
+    attention_scores <- torch_matmul(Q, torch_transpose(K, -1, -2)) / sqrt(d_k)
+    
+    weights <- nnf_softmax(attention_scores, dim = -1)
+    
+    attn_output <- torch_matmul(weights, V)
+    
+    attn_output <- attn_output$transpose(2, 3)$contiguous()$view(c(batch_size, seq_leng_dec, self$embed_dim))
+    
+    output <- self$out(attn_output)
+    return(output)
+  }
+)
+```
+
+Kết quả sau đó sẽ được đẩy qua layer *feed forward* và *normalization* để trả về output (giống như *encoder*).
+
+- **Bước 4: Output of decoder**: Cuối cùng, output của *decoder* sẽ qua 2 layer *linear* và *softmax* để tìm ra output có xác suất cao nhất (nghĩa là output đó sẽ có ý nghĩa nhất trong *sequence* để dự báo cho các step sau).
+
+```{=html}
+<div style="text-align: center; margin-bottom: 20px;">
+  <img src="img/output.png" style="max-width: 40%; height: auto; display: block; margin: 0 auto;">
+  
+  <!-- Picture Name -->
+  <div style="text-align: left; margin-top: 10px;">
+    Hình 10: Output của mô hình
+  </div>
+  
+  <!-- Source Link -->
+  <div style="text-align: right; font-style: italic; margin-top: 5px;">
+    Source: <a href="https://www.datacamp.com/tutorial/how-transformers-work">Link to Image</a>
+  </div>
+</div>
+```
+
+Như vậy, chúng ta đã lướt sơ qua cách hoạt động và các lưu ý của mô hình *Transformer*. Tiếp theo, mình sẽ thử xây dựng trong **R** và dùng nó để xử lí task dự báo chuỗi thời gian.
+
+```{=html}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go to Next Page</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Tahoma', sans-serif;
+            display: flex;
+            flex-direction: column;  /* Stack content and footnote vertically */
+            justify-content: center;  /* Center content vertically */
+            align-items: center;      /* Center content horizontally */
+            margin: 0;
+            background-color: $secondary-color;
+            box-sizing: border-box;
+            min-height: 80vh; /* Adjusted to 80vh to ensure it's not too high */
+        }
+
+        /* Container Styling (Main Content) */
+        .container {
+            text-align: center;
+            padding: 20px 40px; /* Adjust padding for more compactness */
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            width: auto;  /* Auto width to fit content */
+            max-width: 380px;  /* Adjusted max-width for a smaller container */
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 20px;  /* Space from the top of the page */
+        }
+
+        /* Link Styling */
+        .link {
+            font-size: 20px;  /* Adjusted font size for readability */
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 12px 30px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .link:hover {
+            color: #0056b3;
+            text-decoration: none;
+            background-color: #e6f0ff;
+        }
+
+        /* Arrow Styling */
+        .arrow {
+            margin-left: 12px;
+            font-size: 24px;
+            transition: transform 0.3s ease, font-size 0.3s ease;
+        }
+
+        .link:hover .arrow {
+            transform: translateX(8px);
+            font-size: 26px;
+        }
+
+        /* Focus State for Accessibility */
+        .link:focus {
+            outline: 2px solid #0056b3;
+        }
+
+        /* Footer Styling (Footnote) */
+        .footer {
+            font-size: 14px;
+            color: #777;
+            margin-top: 20px;  /* Space between content and footnote */
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Mobile-Friendly Adjustments */
+        @media (max-width: 600px) {
+            .link {
+                font-size: 18px;
+                padding: 8px 15px;  /* Smaller padding for mobile devices */
+            }
+
+            .arrow {
+                font-size: 18px;
+                margin-left: 8px;
+            }
+
+            .container {
+                padding: 15px 30px;  /* Smaller padding on mobile */
+                max-width: 90%;  /* Ensure container fits better on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="https://loccx78vn.github.io/Transformer_model/practice.html" class="link" tabindex="0">
+            Go to Next Page
+            <span class="arrow">➔</span>
+        </a>
+    </div>
+</body>
+</html>
+```

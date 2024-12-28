@@ -132,7 +132,7 @@ Hi vọng các bạn sẽ thích bài viết của mình!
 </head>
 <body>
     <div class="container">
-        <a href="https://loccx78vn.github.io/RNN_model/torch.html" class="link" tabindex="0">
+        <a href="https://loccx78vn.github.io/Transformer_model/transfer.html" class="link" tabindex="0">
             Go to Next Page
             <span class="arrow">➔</span>
         </a>
